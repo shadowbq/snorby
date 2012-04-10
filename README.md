@@ -45,7 +45,7 @@ Pass: snorby
 
 	* FreeBSD:
                 
-                `pkg_add -r ImageMagick`
+		`pkg_add -r ImageMagick`
 
 * Get Snorby from the download section or use the latest edge release via git.
 
