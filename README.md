@@ -73,9 +73,7 @@ Pass: snorby
 
 * Create Mysql Database & Initial Authentication
 
-	* Create an empty database and accompanying user named redmine for example.
-
-	`create database redmine character set utf8;`
+	`create database snorby character set utf8;`
 	
 	`create user 'snorby'@'localhost' identified by 's3cr3tsauce';`
 	
