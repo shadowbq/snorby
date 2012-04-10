@@ -75,11 +75,9 @@ Pass: snorby
 	
 	`cp config/snorby_config.example.yml config/snorby_config.yml`
 
-	* Edit config/snorby_config.yml
-
 	`cp config/database.example.yml config/database.yml`
-
-	* Edit config/database.yml
+	
+	* Fill out settings for config/database.yml && config/snorby_config.yml
 
 
 * Run The Snorby Setup
