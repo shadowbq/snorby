@@ -71,6 +71,16 @@ Pass: snorby
 
 	`pdfkit --install-wkhtmltopdf # If this fails - visit http://code.google.com/p/wkhtmltopdf/ for more information`
 
+* Create Mysql Database & Initial Authentication
+
+	* Create an empty database and accompanying user named redmine for example.
+
+	`create database redmine character set utf8;`
+	
+	`create user 'snorby'@'localhost' identified by 's3cr3tsauce';`
+	
+	`grant all privileges on snorby.* to 'snorby'@'localhost';`
+
 * Edit The Snorby Configuration Files
 	
 	`cp config/snorby_config.example.yml config/snorby_config.yml`
