@@ -47,6 +47,7 @@ Pass: snorby
 	* FreeBSD:
                 
 		`pkg_add -r ImageMagick mysql55-server libxml2 libxslt2 wkhtmltopdf`
+		`cd /usr/ports/x11-fonts/webfonts && make clean && sudo make install`
 
 * Get Snorby from the download section or use the latest edge release via git.
 
@@ -70,14 +71,21 @@ Pass: snorby
 
 	`pdfkit --install-wkhtmltopdf # If this fails - visit http://code.google.com/p/wkhtmltopdf/ for more information`
 
+* Edit The Snorby Configuration Files
+	
+	`cp config/snorby_config.example.yml config/snorby_config.yml`
+
+	* Edit config/snorby_config.yml
+
+	`cp config/database.example.yml config/database.yml`
+
+	* Edit config/database.yml
+
+
 * Run The Snorby Setup
 
 	`rake snorby:setup`
-	
-* Edit The Snorby Configuration File
 
-	`config/snorby_config.yml`
-	
 * Edit The Snorby Mail Configurations
 
 	`config/initializers/mail_config.rb`
