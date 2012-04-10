@@ -24,9 +24,11 @@ Pass: snorby
 
 ## Requirements
 
-* Snort
+* Snort / Suricata / Sagan
 * Ruby >= 1.9.2
-* Rails >= 3.0.0 
+* Ruby Gems
+* Bundler ~> 1.0.0
+* Rails = 3.1.0 (Set in Gemfile by bundler)
 * ImageMagick >= 6.6.4-5
 
 ## Install
@@ -40,6 +42,10 @@ Pass: snorby
 	* Linux:
 	
 		`apt-get install imagemagick`
+
+	* FreeBSD:
+                
+                `pkg_add -r ImageMagick`
 
 * Get Snorby from the download section or use the latest edge release via git.
 
