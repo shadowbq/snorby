@@ -5,16 +5,16 @@
 #
 snorby: &snorby
   adapter: mysql
-  username: root
+  username: snorby
   password: # Example: password: "s3cr3tsauce"
   host: localhost
 
 development:
-  database: snorby
+  database: snorby_development
   <<: *snorby
 
 test:
-  database: snorby
+  database: snorby_test
   <<: *snorby
 
 production:
