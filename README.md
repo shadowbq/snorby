@@ -23,17 +23,18 @@ Pass: snorby
 **NOTE** For the full packet capture HTTP basic AUTH use the same credentials.
 
 ## Requirements
-
-* Snort / Suricata / Sagan
+* Rack enabled WebServer -- Apache + Passenger / Ngnix + Passenger / Unicorn / Mongrel
+* IDS -- Snort / Suricata / Sagan
 * Ruby >= 1.9.2
-* Ruby Gems
+* Ruby Gems >= 1.3.7
 * Bundler ~> 1.0.0
 * Rails = 3.1.0 (Set in Gemfile by bundler)
 * ImageMagick >= 6.6.4-5
+* Mysql Database >= 5.2
 
 ## Install
 
-* Install ImageMagick
+* Install Dependencies
 
 	* Mac OSX:
 	
@@ -45,7 +46,7 @@ Pass: snorby
 
 	* FreeBSD:
                 
-		`pkg_add -r ImageMagick`
+		`pkg_add -r ImageMagick mysql55-server libxml2 libxslt2 wkhtmltopdf`
 
 * Get Snorby from the download section or use the latest edge release via git.
 
