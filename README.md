@@ -61,7 +61,9 @@ Pass: snorby
 
 	`$ bundle install`
 	
-	* NOTE: If you get missing gem issues in production use `bundle install --path vendor/cache`
+	* NOTE: If you get missing gem issues in production use `bundle install --deployment`
+	
+		If you have run `bundle package`, the cached gems will be used automatically. 
 
 	* If your system gems are updated beyond the gemfile.lock you should use as an example `bundle exec rake snorby:setup` 
 
@@ -71,10 +73,8 @@ Pass: snorby
 
 	`pdfkit --install-wkhtmltopdf # If this fails - visit http://code.google.com/p/wkhtmltopdf/ for more information`
 
-* Create Mysql Database & Initial Authentication
+* Create Mysql User & Initial Authentication
 
-	`create database snorby character set utf8;`
-	
 	`create user 'snorby'@'localhost' identified by 's3cr3tsauce';`
 	
 	`grant all privileges on snorby.* to 'snorby'@'localhost';`
@@ -90,7 +90,7 @@ Pass: snorby
 
 * Run The Snorby Setup
 
-	`rake snorby:setup`
+	`RAILS_ENV=production bundle exec rake snorby:setup`
 
 * Edit The Snorby Mail Configurations
 
