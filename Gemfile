@@ -5,12 +5,12 @@ RSPEC_VERSION = '~> 2.0.0'
 DATAMAPPER = 'http://github.com/datamapper'
 DM_VERSION = '~> 1.2.0'
 
-gem 'rake', '0.9.2'
+gem 'rake',                       '~> 0.9.2'
 gem 'thin', '1.3.1'
 
 gem 'rails',                       RAILS_VERSION
 gem 'jquery-rails'
-gem 'bundler',                     '~> 1.0.0'
+gem 'bundler',                     '~> 1.0'
 
 # DateTime Patches
 gem 'home_run',                    :require => 'date'
@@ -42,7 +42,7 @@ gem 'dm-chunked_query',            '~> 0.3'
 gem 'capistrano'
 
 # Rails Plugins
-gem 'jammit',                      '~> 0.5.4'
+gem 'jammit',                      '~> 0.6.0'
 gem 'devise',                      '~> 1.4'
 gem 'dm-devise',                   '~> 1.5'
 gem 'rubycas-client'

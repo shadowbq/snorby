@@ -12,6 +12,8 @@ development:
 #    base_url: https://auth.server.com.br/
 #    login_url: https://auth.server.com.br/login?domain=server
 #    logout_url: https://auth.server.com.br/logout?domain=server
+#    admin_email: adminuser@my.domain.com
+
 
 test:
   domain: localhost:3000

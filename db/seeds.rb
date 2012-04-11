@@ -1,8 +1,13 @@
 # Define the snort schema version
 SnortSchema.create(:vseq => 107, :ctime => Time.now, :version => "Snorby #{Snorby::VERSION}") if SnortSchema.first.blank?
 
-# Default user setup
-User.create(:name => 'Administrator', :email => 'snorby@snorby.org', :password => 'snorby', :password_confirmation => 'snorby', :admin => true) if User.all.blank?
+
+if Snorby::CONFIG[:authentication_mode] == "database"
+  # Default user setup
+  User.create(:name => 'Administrator', :email => 'snorby@snorby.org', :password => 'snorby', :password_confirmation => 'snorby', :admin => true) if User.all.blank?
+elsif Snorby::CONFIG[:authentication_mode] == "cas"
+  User.create(:name => 'Administator', :email => Snorby::CONFIG[:cas_config]["admin_email"], :admin => true) if User.all.blank?
+end
 
 # Snorby General Settings
 Setting.set(:company, 'Snorby.org') unless Setting.company?
