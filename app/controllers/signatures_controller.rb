@@ -1,6 +1,6 @@
 class SignaturesController < ApplicationController
 
-  before_filter :require_administrative_privileges
+  before_filter :require_administrative_privileges,  :except => [:index, :search]
   helper_method :sort_column, :sort_direction
 
   def index
