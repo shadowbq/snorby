@@ -148,6 +148,19 @@ You can open the rails console at anytime and interact with the Snorby environme
 	# If the Snorby worker is running this will start the cache jobs and set the run_at time for the current time.
 	Snorby::Jobs.run_now!
 
+## Contributors
+
+Dustin Willis Webber
+ovargas27
+José Antonio Parra
+Antonio Marques
+emilecantin
+Giovani Generali
+Erich Menge
+Ursinho
+Shadowbq
+Yabbo
+
 ## License
 
 Snorby - All About Simplicity.
