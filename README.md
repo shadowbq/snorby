@@ -46,7 +46,7 @@ Pass: snorby
 
 	* FreeBSD:
                 
-		`pkg_add -r ImageMagick mysql55-server libxml2 libxslt2 wkhtmltopdf`
+		`pkg_add -r ImageMagick mysql55-server libxml2 libxslt wkhtmltopdf`
 		`cd /usr/ports/x11-fonts/webfonts && make clean && sudo make install`
 
 * Get Snorby from the download section or use the latest edge release via git.
