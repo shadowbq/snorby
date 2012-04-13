@@ -53,13 +53,24 @@ Pass: snorby
 
 	`git clone git://github.com/Snorby/snorby.git`
 
-* Move into de snorby Directory
+* Move into the snorby Directory
 
 	`cd snorby`
 
+* Set File Permissions	
+
+	The user who runs Snorby must have write permission on the following subdirectories:  log, tmp.
+
+	Assuming you run Snorby with a www-data user:
+
+	`sudo chown -R www-data:www-data log tmp` 
+	
+	`sudo chmod -R 755 log tmp` 
+	
+
 * Install Gem Dependencies  (make sure you have bundler installed: `gem install bundler`)
 
-	`$ bundle install`
+	`bundle install`
 	
 	* NOTE: If you get missing gem issues in production use `bundle install --deployment`
 	
