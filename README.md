@@ -74,10 +74,12 @@ Pass: snorby
 	`pdfkit --install-wkhtmltopdf # If this fails - visit http://code.google.com/p/wkhtmltopdf/ for more information`
 
 * Create Mysql User & Initial Authentication
-
-	`create user 'snorby'@'localhost' identified by 's3cr3tsauce';`
 	
-	`grant all privileges on snorby.* to 'snorby'@'localhost';`
+	`mysql -u root -p`
+
+	`mysql> create user 'snorby'@'localhost' identified by 's3cr3tsauce';`
+	
+	`mysql> grant all privileges on snorby.* to 'snorby'@'localhost';`
 
 * Edit The Snorby Configuration Files
 	
