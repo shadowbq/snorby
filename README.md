@@ -27,7 +27,7 @@ Pass: snorby
 * IDS -- Snort / Suricata / Sagan
 * Ruby >= 1.9.2
 * Ruby Gems >= 1.3.7
-* Bundler ~> 1.0.0
+* Bundler ~> 1.0
 * Rails = 3.1.0 (Set in Gemfile by bundler)
 * ImageMagick >= 6.6.4-5
 * Mysql Database >= 5.2
