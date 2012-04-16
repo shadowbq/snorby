@@ -1,4 +1,6 @@
-<% javascript :footer, 'sparkline', 'highcharts' %>
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="/javascripts/excanvas.min.js"></script><![endif]-->
+<%= stylesheet 'jquery', 'jquery.jqplot.min' %>
+<% javascript :footer, 'sparkline', 'highcharts', 'jquery.jqplot.min', 'jqplot.plugins.min' %>
 
 <%= title "Dashboard" do %>
 

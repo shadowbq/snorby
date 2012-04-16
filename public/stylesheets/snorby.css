@@ -3674,8 +3674,9 @@ img.avatar-small{
 }
 
 div.dashboard-graph{
-	height: 400px;
-	width: 722px;
+	height: 395px;
+	width: 718px;
+	margin: 5px;
 }
 
 div.dashboard-graph.no-pie-data{
