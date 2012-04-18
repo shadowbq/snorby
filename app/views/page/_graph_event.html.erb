@@ -5,27 +5,15 @@
 		$(document).ready(function(){
 		  // jQuery selector for elements with a specific class attribute.
 		  // Here, there is one div with the class "chart2"
-		  
-		  <%
-		  i = 0;
-		  @ticks = @sensor_metrics[0][:range].collect { |ticks| i = i+1; [i, ticks.gsub("'","").to_i] }
-		  
-		  i = 0;
-		  @sensor_metrics.each { |sensor| %>
+		  $.dash = {};
+
+		  <% @sensor_metrics.each_with_index { |sensor, i| %>
 		  	var s<%= i %> = <%= sensor[:data] %>; 
-		  <%
-		    i = i + 1;
-		  }
-		  @series = ""
-		  i.times { |a|    
-            @series = @series + "s#{a}, "
-		    }
-		  @series.chomp!(", ")   
-		  %>
+		  <% } %>
 		  		  
 		  var ticks = <%= @ticks %>;
 		 
-		  $("#events-graph").jqplot ([<%= @series %> ], {
+		  $.dash.events = $.jqplot ('events-graph', [<%= @series %> ], {
 		      title: "Event Count vs Time By Sensor",
 		      series:[
 		        <% @sensor_metrics.each {|sensor| %> 

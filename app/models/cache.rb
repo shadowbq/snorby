@@ -133,10 +133,10 @@ class Cache
     first(:order => [:updated_at.desc])
   end
 
-  def self.sensor_metrics(type=nil)
+  def self.sensor_metrics(type=nil, limit=5)
     @metrics = []
 
-    Sensor.all(:limit => 5, :order => [:events_count.desc]).each do |sensor|
+    Sensor.all(:limit => limit, :order => [:events_count.desc]).each do |sensor|
       count = count_hash(type)
 
       blah = self.all(:sid => sensor.sid).group_by { |x| "#{x.ran_at.day}-#{x.ran_at.hour}" }
@@ -207,7 +207,7 @@ class Cache
     @top
   end
 
-  def self.signature_metrics(limit=20)
+  def self.signature_metrics(limit=10)
     @metrics = {}
     @top = []
     @cache = self

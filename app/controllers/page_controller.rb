@@ -9,8 +9,8 @@ class PageController < ApplicationController
 
     set_defaults
 
-    @src_metrics = @cache.src_metrics
-    @dst_metrics = @cache.dst_metrics
+    @src_metrics = @cache.src_metrics(10)
+    @dst_metrics = @cache.dst_metrics(10)
 
     @tcp = @cache.protocol_count(:tcp, @range.to_sym)
     @udp = @cache.protocol_count(:udp, @range.to_sym)
@@ -20,16 +20,25 @@ class PageController < ApplicationController
     @medium = @cache.severity_count(:medium, @range.to_sym)
     @low = @cache.severity_count(:low, @range.to_sym)
     
-    @sensor_metrics = @cache.sensor_metrics(@range.to_sym)
+    @sensor_metrics = @cache.sensor_metrics(@range.to_sym, Sensor.all.length)
 
-    @signature_metrics = @cache.signature_metrics
+    @signature_metrics = @cache.signature_metrics(10)
 
     @event_count = @cache.all.map(&:event_count).sum
      
     if @sensor_metrics.last
       @axis = @sensor_metrics.last[:range].join(',')
+      i = 0
+      @ticks = @sensor_metrics.last[:range].collect { |ticks| 
+        i = i+1 
+        [i, ticks.gsub("'","").to_i] 
+      }
     end
 
+    @series = ""
+    @sensor_metrics.each_index { |i| @series = @series + "s#{i}, " }
+    @series.chomp!(", ")
+    
     @classifications = Classification.all(:order => [:events_count.desc])
     @sensors = Sensor.all(:limit => 5, :order => [:events_count.desc])
     @favers = User.all(:limit => 5, :order => [:favorites_count.desc])

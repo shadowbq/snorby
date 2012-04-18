@@ -839,15 +839,17 @@ var Snorby = {
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#events-graph').show();
+				$.dash.events.replot();
 				return false;
 			});
 
-      $('a.show_map_graph').live('click', function(e) {
+      		$('a.show_map_graph').live('click', function(e) {
 				e.preventDefault();
 				$('#box-menu li').removeClass('active');
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#geoip-graph').show();
+				$.dash.map.replot();
 				return false;
 			});
 
@@ -857,6 +859,7 @@ var Snorby = {
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#severity-graph').show();
+				$.dash.severity.replot();
 				return false;
 			});
 
@@ -866,6 +869,7 @@ var Snorby = {
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#protocol-graph').show();
+				$.dash.proto.replot();
 				return false;
 			});
 
@@ -875,6 +879,7 @@ var Snorby = {
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#signature-graph').show();
+				$.dash.signature.replot();
 				return false;
 			});
 
@@ -884,6 +889,7 @@ var Snorby = {
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#classification-graph').show();
+				$.dash.classification.replot();
 				return false;
 			});
 
@@ -893,6 +899,7 @@ var Snorby = {
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#source-ips-graph').show();
+				
 				return false;
 			});
 
@@ -902,6 +909,7 @@ var Snorby = {
 				$(this).parent('li').addClass('active');
 				$('div.dashboard-graph').hide();
 				$('div#destination-ips-graph').show();
+		
 				return false;
 			});
 

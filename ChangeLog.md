@@ -1,3 +1,15 @@
+# 2.5.1.1
+  * Removed HighCharts due to commercial licensing requirement
+  * Replaced Dashboard charting with jqplot (www.jqplot.com) a GPL2 compliant charting library.
+  * Moved Signatures from admin section to standard menu
+  * Removed Duplicate Sensors menu entry in admin section
+  * Updated Readme.md
+  * Updated Database Seed script to support CAS Authentication
+  * Change Database yml file to use explicit Databases for Rails ENV.
+  * Updated Jammit and Rack Gems to quiet errors.
+  * Fixed Bug that stopped Cache from to caching all sensors 
+  
+
 # Snorby 2.5.1
 
   * Fixed Firefox JS/search issues

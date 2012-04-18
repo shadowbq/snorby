@@ -2,77 +2,59 @@
 
 	<script type="text/javascript">
 		
-		chart = new Highcharts.Chart({
-		      chart: {
-		         renderTo: 'protocol-graph',
-		         defaultSeriesType: 'spline',
-		         marginRight: 80,
-							marginLeft: 80,
-							marginTop: 50,
-		         marginBottom: 50
+		$(document).ready(function(){
+		  
+		 var ticks = <%= @ticks %>;
+		 
+		 $.dash.proto = $.jqplot ('protocol-graph', [[<%= @tcp.join(', ') %>], [<%= @udp.join(', ') %>], [<%= @icmp.join(', ') %>] ], {
+		      title: "Protocol Count vs Time",
+		      height: 200,
+		      width: 300,
+		      series:[
+		        {label:'tcp', markerOptions: { style:"circle" }}, 
+		        {label:'ucp', markerOptions: { style:"diamond" }},
+		        {label:'icmp', markerOptions: { style:"filledSquare" }}
+		        ],
+		      axesDefaults: {
+		        labelRenderer: $.jqplot.CanvasAxisLabelRenderer
 		      },
-          credits: {
-            enabled: false
-          },
-		      title: {
-		         text: 'Protocol Count vs Time',
-		         x: -20 //center
+		      seriesDefaults: {
+		          rendererOptions: {
+		              smooth: true
+		          }
 		      },
-		      xAxis: {
-						categories: [<%= @axis %>],
-		        title: {
-								margin: 10,
-								<% if (@range == 'year' || @range == 'quarter') %>
-									text: 'Month of Year'
-								<% elsif (@range == 'month' || @range == 'last_month') %>
-									text: 'Date of Month'
-								<% elsif (@range == 'week' || @range == 'last_week') %>
-									text: 'Date Of Week'
-                <% elsif @range == 'last_24' %>
-                  text: 'Last 24 Hours'
-								<% else %>
-									text: 'Hour of Day'
-								<% end %>
-		         }
-		      },
-		      yAxis: {
-		         title: {
-		            text: 'Protocol Count'
-		         },
-		         plotLines: [{
-		            value: 0,
-		            width: 1,
-		            color: '#808080'
-		         }]
-		      },
-		      tooltip: {
-		         formatter: function() {
-		                   return '<b>'+ this.series.name +'</b><br/>'+ this.y + ' Events';
-		         }
-		      },
-		      legend: {
-		         layout: 'vertical',
-		         align: 'right',
-		         verticalAlign: 'top',
-		         x: 0,
-		         y: 0,
-		         borderWidth: 0,
-						 borderRadius: 0,
-						 borderColor: '#ddd',
-						 backgroundColor: '#fff'
-		      },
-		      series: [{
-						name: 'TCP',
-						data: [<%= @tcp.join(', ') %>]
-					},{
-						name: 'UDP',
-						data: [<%= @udp.join(', ') %>]
-					},{
-						name: 'ICMP',
-						data: [<%= @icmp.join(', ') %>]
-					}]
-		   });
-		
+		      highlighter: {
+			       show: true,
+			       sizeAdjust: 9.5
+			  },
+			  grid: { drawGridlines: true },
+			  cursor: { show: true, zoom:true },
+		      legend: { show:true, location: 'e' },
+		      axes: {
+		        xaxis: {
+		        	tickOptions:{ showGridline:false},	 
+		        	ticks: ticks,
+		        	pad: 0,
+				<% if (@range == 'year' || @range == 'quarter') %>
+					label: 'Month of Year'
+				<% elsif (@range == 'month' || @range == 'last_month') %>
+					label: 'Date of Month'
+				<% elsif (@range == 'week' || @range == 'last_week') %>
+					label: 'Date Of Week'
+				<% elsif @range == 'last_24' %>
+  					label: 'Last 24 Hours'
+				<% else %>
+					label: 'Hour of Day'
+				<% end %>
+		          
+		        },
+		        yaxis: {
+		                 	
+		          label: 'Protocol Count'
+		        }
+		      }
+		    });
+		});
 		
 	</script>
 

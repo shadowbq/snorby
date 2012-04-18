@@ -194,6 +194,5 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-* Note: The snorby source code is 100% free and open source however we use highcharts for metrics
-and reporting. Please make sure you review the [highcharts](http://www.highcharts.com) licensing in detail [here](http://www.highcharts.com/license). 
+* Note: The snorby source code is 100% free and open source 
 The below license only applies to snorby source code which can be identified with the below license in each file.

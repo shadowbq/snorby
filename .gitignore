@@ -12,6 +12,7 @@ log/*
 .bundle/
 .document
 .DS_Store
+.project
 
 doc
 bin
