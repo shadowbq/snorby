@@ -140,10 +140,10 @@ class DailyCache
     count
   end
 
-  def self.sensor_metrics(type=:week)
+  def self.sensor_metrics(type=:week, limit=5)
     @metrics = []
 
-    Sensor.all(:limit => 5, :order => [:events_count.desc]).each do |sensor|
+    Sensor.all(:limit => limit, :order => [:events_count.desc]).each do |sensor|
       count = []
       time_range = []
 
@@ -229,7 +229,7 @@ class DailyCache
     @top
   end
 
-  def self.signature_metrics(limit=20)
+  def self.signature_metrics(limit=10)
     @metrics = {}
     @top = []
     @cache = self
