@@ -9,6 +9,7 @@ Snorby::Application.routes.draw do
     member do
       get :last_error
       get :handler
+      get :log
     end
   end
 
@@ -38,6 +39,9 @@ Snorby::Application.routes.draw do
       get :start_daily_cache
       get :start_geoip_update
       get :start_worker
+      get :reset_sensor_cache
+      get :reset_daily_cache
+      get :reset_cache
     end
   end
 

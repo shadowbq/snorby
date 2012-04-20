@@ -125,7 +125,7 @@ module Snorby
 
         Snorby::Jobs.daily_cache.destroy! if Snorby::Jobs.daily_cache?
 
-        Delayed::Job.enqueue(Snorby::Jobs::DailyCacheJob.new(false), 
+        Delayed::Job.enqueue(Snorby::Jobs::DailyCacheJob.new(verbose), 
                              :priority => 1, 
                              :run_at => Time.now.tomorrow.beginning_of_day)
 

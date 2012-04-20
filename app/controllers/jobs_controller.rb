@@ -23,6 +23,19 @@ class JobsController < ApplicationController
     render :layout => false
   end
 
+  def log
+    @job = Snorby::Jobs.find.get(params[:id])
+    logfile = @job.handler.split("Jobs::")[1].split(" ")[0]
+    
+    @logtext = ""
+    
+    File.open("log/#{logfile}.log") do |f| 
+      @logtext = f.tail(25) 
+    end
+    
+    render :layout => false
+  end
+
   def show
     @job = Snorby::Jobs.find.get(params[:id])
 
@@ -65,3 +78,6 @@ class JobsController < ApplicationController
     
   end
 end
+
+
+
