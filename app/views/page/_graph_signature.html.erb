@@ -16,6 +16,7 @@
 	                varyBarColor: true
 	            }
 	        },
+	        highlighter:{ show: false},
 	        axes:{
 	            xaxis:{
 	                label: 'Signature Name',
@@ -40,6 +41,12 @@
 
 <% end %>
 
+<% if @signature_metrics.empty? %>
+
+	<div id='signature-graph' style='display:none;' class='dashboard-graph no-pie-data'></div>
+	
+<% else %>
+
 <div id='signature-graph' style='display:none;' class='dashboard-graph'></div>
 
-
+<% end %>
