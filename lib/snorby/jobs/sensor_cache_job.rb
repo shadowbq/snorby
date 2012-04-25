@@ -22,6 +22,7 @@ module Snorby
     class SensorCacheJob < Struct.new(:verbose)
 
       include Snorby::Jobs::CacheHelper
+      
       attr_accessor :events, :last_cache, :cache, :last_event
 
       def perform

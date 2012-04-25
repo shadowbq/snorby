@@ -25,18 +25,23 @@ class JobsController < ApplicationController
 
   def log
     @job = Snorby::Jobs.find.get(params[:id])
-    logfile = @job.handler.split("Jobs::")[1].split(" ")[0]
     
+    begin
+      logfile = @job.handler.split("Jobs::")[1].split(" ")[0]
+    rescue
+      logfile = "handler"
+    end
+      
     @logtext = ""
     
     if File.exists?("log/#{logfile}.log") 
-      File.open("log/#{logfile}.log") do |f| 
-        @logtext = f.tail(35).join("\n")
-      end
+      @logtext = []
+      File::Tail::Logfile.open("log/#{logfile}.log", :backward => 35, :return_if_eof => true) { |log| log.tail { |line| @logtext << line }}
+      @logtext = @logtext.join("\n")
     else
       @logtext = "'log/#{logfile}.log' does not exists. Worker / Jobs might not be running in verbose mode."
     end
-    
+     
     render :layout => false
   end
 

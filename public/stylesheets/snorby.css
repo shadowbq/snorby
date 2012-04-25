@@ -1796,6 +1796,11 @@ table.default td.handler a{
 	font-family: mono, Courier, "Courier New";
 }
 
+table.default td.trash,
+table.default td.logs{
+	width: 40px;
+}
+
 /* @end */
 
 /* @group LI Table */

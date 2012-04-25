@@ -19,20 +19,10 @@
 module Snorby
   module Jobs
     module CacheHelper
-      require 'logger'
+      
+      include Snorby::Jobs::JobsHelper
       
       BATCH_SIZE = 5000
-    
-      def logit(msg, show_sensor=true)
-        job_logit = Logger.new ('log/' + (self.class.name.split('::').last || 'job') + '.log')
-        
-        if show_sensor
-          job_logit.error "H:#{self.class} Sensor #{@sensor.sid}: #{msg}" if verbose
-        else
-          job_logit.error "H:#{self.class}#{msg}" if verbose
-        end
-
-      end
 
       def merged_records(records)
         data = {

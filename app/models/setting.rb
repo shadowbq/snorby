@@ -12,6 +12,7 @@ class Setting
     :packet_capture,
     :packet_capture_auto_auth,
     :autodrop,
+    :verbose_logs,
     :geoip
   ]
 

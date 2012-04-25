@@ -17,8 +17,22 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 module Snorby
+  module Jobs
+    module JobsHelper
+      require 'logger'
+      
+      def logit(msg, show_sensor=true)
+        job_logit = Logger.new ('log/' + (self.class.name.split('::').last || 'job') + '.log')
+        
+        if show_sensor
+          job_logit.error "#{self.class} Sensor #{@sensor.sid}: #{msg}" if verbose
+        else
+          job_logit.error "#{self.class}#{msg}" if verbose
+        end
 
-  # Snorby Version
-  VERSION = '2.5.1.2'
-
-end
+      end
+      
+    end
+  end
+end    
+      

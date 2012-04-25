@@ -60,6 +60,11 @@
 				<%= check_box_tag '[settings][lookups]', 1, (Setting.lookups ? Setting.find(:lookups) : nil) %> <%= label_tag 'Address Lookups' %><br />
 				<i>(This option enables the analyst to perform basic queries on source & destination addresses using external sources.)</i><br />
 			</p>
+			
+			<p>
+				<%= check_box_tag '[settings][verbose_logs]', 1, (Setting.verbose_logs ? Setting.find(:verbose_logs) : nil) %> <%= label_tag 'Verbose Logs' %><br />
+				<i>(This option enables verbose logs for the Worker and Jobs that perform caching and geoip tagging.)</i><br />
+			</p>
 
 			<p>
 				<%= check_box_tag '[settings][event_notifications]', 0, (Setting.event_notifications ? Setting.find(:event_notifications) : false) %> <%= label_tag 'Enable Global Event Notifications' %><br />

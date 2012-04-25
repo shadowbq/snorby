@@ -36,10 +36,10 @@ module Snorby
       Delayed::Job.enqueue(obj, :priority => priority, :run_at => time)
     end
 
-    def self.start
-      Jobs::SensorCacheJob.new(false).perform unless Jobs.sensor_cache?
-      Jobs::DailyCacheJob.new(false).perform unless Jobs.daily_cache?
-      Jobs::GeoipUpdatedbJob.new(false).perform if (Setting.geoip? && !Jobs.geoip_update?)
+    def self.start(verbose=Setting.verbose_logs?)
+      Jobs::SensorCacheJob.new(verbose).perform unless Jobs.sensor_cache?
+      Jobs::DailyCacheJob.new(verbose).perform unless Jobs.daily_cache?
+      Jobs::GeoipUpdatedbJob.new(verbose).perform if (Setting.geoip? && !Jobs.geoip_update?)
     end
 
     def self.sensor_cache
@@ -102,7 +102,7 @@ module Snorby
       nil
     end
 
-    def self.reset_cache(type, verbose=true)
+    def self.reset_cache(type, verbose=Setting.verbose_logs?)
       case type.to_sym
       when :sensor
         Cache.all.destroy!
@@ -118,14 +118,14 @@ module Snorby
       end
     end
 
-    def self.run_now!
-      Delayed::Job.enqueue(Snorby::Jobs::SensorCacheJob.new(false), 
+    def self.run_now!(verbose=Setting.verbose_logs?)
+      Delayed::Job.enqueue(Snorby::Jobs::SensorCacheJob.new(verbose), 
       :priority => 1, :run_at => DateTime.now + 5.second)
 
-      Delayed::Job.enqueue(Snorby::Jobs::DailyCacheJob.new(false), 
+      Delayed::Job.enqueue(Snorby::Jobs::DailyCacheJob.new(verbose), 
       :priority => 1, :run_at => DateTime.now + 5.second)
 
-      Delayed::Job.enqueue(Snorby::Jobs::GeoipUpdatedbJob.new, 
+      Delayed::Job.enqueue(Snorby::Jobs::GeoipUpdatedbJob.new(verbose), 
       :priority => 1, :run_at => DateTime.now + 5.second)
     end
 
@@ -133,7 +133,7 @@ module Snorby
       if Jobs.sensor_cache?
         Jobs.sensor_cache.update(:run_at => DateTime.now + 5.second)
       else
-        Delayed::Job.enqueue(Snorby::Jobs::SensorCacheJob.new(false), 
+        Delayed::Job.enqueue(Snorby::Jobs::SensorCacheJob.new(verbose), 
         :priority => 1, :run_at => DateTime.now + 5.second)
       end
     end
