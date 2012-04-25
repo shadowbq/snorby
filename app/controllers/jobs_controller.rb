@@ -29,8 +29,12 @@ class JobsController < ApplicationController
     
     @logtext = ""
     
-    File.open("log/#{logfile}.log") do |f| 
-      @logtext = f.tail(25) 
+    if File.exists?("log/#{logfile}.log") 
+      File.open("log/#{logfile}.log") do |f| 
+        @logtext = f.tail(35).join("\n")
+      end
+    else
+      @logtext = "'log/#{logfile}.log' does not exists. Worker / Jobs might not be running in verbose mode."
     end
     
     render :layout => false
