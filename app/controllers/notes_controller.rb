@@ -1,6 +1,6 @@
 class NotesController < ApplicationController
   
-  before_filter :require_administrative_privileges, :only => [:destroy, :edit, :update]
+  before_filter :require_administrative_privileges, :only => [:index, :destroy, :edit, :update]
   before_filter :find_event, :only => [:create, :new]
   
   def find_event
@@ -9,6 +9,8 @@ class NotesController < ApplicationController
   end
   
   def index
+    @notes = Note.all.page(params[:page].to_i, :per_page => @current_user.per_page_count, :order => [:id.asc])
+    @show_alert = true
   end
   
   def new

@@ -11,6 +11,14 @@
 		</div>
 		
 	<% end %>
+
+    <% if @show_alert %>
+	<div class='event-data' style='color:#A5A5A5; font-size:0.8em; text-decoration:none; margin-bottom:3px;'>		
+		  <%= note.event.id %> <%= note.event.signature.name %>
+		  <%= link_to "Show Alert", view_events_url(:sid => note.event.sid, :cid => note.event.cid), :class => 'dark-button' %>
+	</div>	
+    <% end %>
+
 	
 	<div class='username'>
 		
@@ -19,6 +27,8 @@
 		<i><%= display_time(note.created_at) %></i>
 		
 	</div>
+	
+
 	
 	<div class='note-body'>
 		

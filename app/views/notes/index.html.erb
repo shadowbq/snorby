@@ -1,0 +1,12 @@
+<%= title "Notes Management" do -%>
+	
+
+<% end %>
+
+<div id="notes" class='grid_12 page boxit'>
+	
+	<%= render @notes %>
+
+	<%= pager(@notes, 'notes') %>
+	
+</div>
