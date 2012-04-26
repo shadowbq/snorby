@@ -109,6 +109,8 @@ if Severity.all.blank?
 end
 
 # Validate Snorby Indexes
+require "./lib/snorby/jobs/jobs_helper"
+include Snorby::Jobs::JobsHelper
 require "./lib/snorby/jobs/cache_helper"
 include Snorby::Jobs::CacheHelper
 validate_cache_indexes

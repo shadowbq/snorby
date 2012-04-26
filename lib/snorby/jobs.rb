@@ -17,6 +17,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 require 'snorby/jobs/alert_notifications'
+require 'snorby/jobs/jobs_helper'
 require 'snorby/jobs/cache_helper'
 require 'snorby/jobs/daily_cache_job'
 require 'snorby/jobs/event_mailer_job'
