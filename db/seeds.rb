@@ -108,6 +108,15 @@ if Severity.all.blank?
   Severity.create(:id => 3, :sig_id => 3, :name => 'Low Severity', :text_color => "#ffffff", :bg_color => "#3a781a")
 end
 
+# Load Default Lookup Source
+if Lookup.all.blank?
+  Lookup.create(:title => 'Robtex', :value => 'http://www.robtex.com/ip/${ip}')
+  Lookup.create(:title => 'SANS IP Lookup', :value => 'http://isc.sans.edu/ipinfo.html?ip=${ip}')
+  Lookup.create(:title => 'SANS Port Lookup', :value => 'http://isc.sans.edu/port.html?port=${port}')
+  Lookup.create(:title => 'Trusted Source', :value => 'http://www.mcafee.com/threat-intelligence/ip/default.aspx?ip=${ip}')
+  Lookup.create(:title => 'Whois Domain tools', :value => 'http://whois.domaintools.com/${ip}')
+end
+
 # Validate Snorby Indexes
 require "./lib/snorby/jobs/jobs_helper"
 include Snorby::Jobs::JobsHelper
