@@ -32,7 +32,7 @@ module Snorby
     end
     
     def whois
-      @whois ||= Whois::Client.new.query(@address)
+      @whois ||= whois_lookup
     end
     
     def hostname
@@ -41,6 +41,16 @@ module Snorby
     
     def dns
       @dns ||= Resolver(hostname)
+    end
+    
+    private 
+    
+    def whois_lookup
+      begin
+        Whois::Client.new.query(@address) 
+      rescue Timeout::Error
+        "Timeout::Error - Could not reach Whois server(s) to query. Ensure that outbound tcp port 43 is open on your firewall."
+      end
     end
     
   end

@@ -17,6 +17,7 @@ Setting.set(:daily, 1) unless Setting.daily?
 Setting.set(:weekly, 1) unless Setting.weekly?
 Setting.set(:monthly, 1) unless Setting.monthly?
 Setting.set(:lookups, 1) unless Setting.lookups?
+Setting.set(:whois, 1) unless Setting.whois?
 Setting.set(:verbose_logs, 1) unless Setting.verbose_logs?
 
 
