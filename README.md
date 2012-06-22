@@ -42,7 +42,7 @@ Pass: snorby
 
 	* Linux:
 	
-		`apt-get install imagemagick`
+		`apt-get install imagemagick libmagickwand-dev`
 
 	* FreeBSD:
                 
