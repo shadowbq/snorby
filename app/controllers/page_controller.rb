@@ -68,23 +68,22 @@ class PageController < ApplicationController
 
   def force_cache
     Snorby::Jobs.force_sensor_cache
-    render :json => {
-      :caching => Snorby::Jobs.caching?,
-      :problems => Snorby::Worker.problems?,
-      :running => Snorby::Worker.running?,
-      :daily_cache => Snorby::Jobs.daily_cache?,
-      :sensor_cache => Snorby::Jobs.sensor_cache?
-    }
+    self.cache_status
   end
 
   def cache_status
-    render :json => {
-      :caching => Snorby::Jobs.caching?,
-      :problems => Snorby::Worker.problems?,
-      :running => Snorby::Worker.running?,
-      :daily_cache => Snorby::Jobs.daily_cache?,
-      :sensor_cache => Snorby::Jobs.sensor_cache?
-    }
+    current_cache_status = {
+        :caching => Snorby::Jobs.caching?,
+        :problems => Snorby::Worker.problems?,
+        :running => Snorby::Worker.running?,
+        :daily_cache => Snorby::Jobs.daily_cache?,
+        :sensor_cache => Snorby::Jobs.sensor_cache?
+      }
+
+    respond_to do |format|
+      format.json { render :json => current_cache_status }
+      format.xml { render :xml => current_cache_status.to_xml }
+    end
   end
 
   def results
