@@ -49,7 +49,7 @@ module Snorby
         begin
           Sensor.all.each do |sensor|
             @sensor = sensor
-            logit "\n[~] Building .. "
+            logit "[~] Begin Sensor Cache Building .. "
   
             if @sensor.daily_cache.first.blank?
   
@@ -89,7 +89,7 @@ module Snorby
 
         begin
 
-          logit "\n[~] Building Sensor Metrics", false
+          logit "[~] Building Sensor Metrics", false
           Sensor.all.each do |x|
             x.update(:events_count => Event.all(:sid => x.sid).count)
           end
@@ -104,8 +104,13 @@ module Snorby
           Severity.all.each do |x|
             x.update(:events_count => Event.all(:"signature.sig_priority" => x.sig_id).count)
           end
-          
-          logit "[~] Preparing to Email Reports"
+        rescue => e
+          logit "#{e}", false
+          logit "[backtrace] #{e.backtrace.first}", false
+        end
+        
+        begin
+          logit "[~] Preparing to Email Reports", false
           send_weekly_report if Setting.weekly?
           send_monthly_report if Setting.monthly?
           ReportMailer.daily_report.deliver if Setting.daily?
@@ -115,29 +120,32 @@ module Snorby
         rescue => e
           logit "#{e}", false
           logit "[backtrace] #{e.backtrace.first}", false
-          logit "Error: Unable to send report - please make sure your mail configurations are correct."
+          logit "Error: Unable to send report - please make sure your mail configurations are correct.", false
         end
 
         # Autodrop Logic
         if Setting.autodrop?
           
-          logit "Dropping old events", false
+          logit "[~] Auto Dropping old events", false
 
           while Event.count > Setting.autodrop_count.value.to_i do
             autodrop = Event.all(:limit => 1000, :order => :timestamp.asc)
             autodrop.destroy!
           end
         end
-
+        
+        logit "[~] Scheduling next job run", false
         Snorby::Jobs.daily_cache.destroy! if Snorby::Jobs.daily_cache?
 
         Delayed::Job.enqueue(Snorby::Jobs::DailyCacheJob.new(verbose), 
                              :priority => 1, 
                              :run_at => Time.now.tomorrow.beginning_of_day)
-
+        
+        logit "[~~] End Daily Cache Job", false
+        
       rescue => e
-        puts e
-        puts e.backtrace
+        logit "#{e}", false
+        logit "[backtrace] #{e.backtrace.first}", false
         @cache.destroy! if defined?(@cache) 
       end
 
@@ -160,7 +168,8 @@ module Snorby
         @cache = DailyCache.first_or_create(:ran_at => day_start, :sensor => @sensor)
 
         if event.empty?
-          logit "No Events"
+          logit "New Day: #{day_start} - #{day_end}"
+          logit "No events found"
         else
           logit "New Day: #{day_start} - #{day_end}"
 
