@@ -45,8 +45,9 @@ module Snorby
 
         @stop_date = DateTime.now.yesterday.end_of_day
 
-
+        logit "\n[~~] Daily Cache Job", false
         Sensor.all.each do |sensor|
+          logit "\n[~] Building .. "
           @sensor = sensor
 
           if @sensor.daily_cache.first.blank?
@@ -58,7 +59,6 @@ module Snorby
              day_start =  sensor_event.timestamp.beginning_of_day
              day_end = sensor_event.timestamp.end_of_day
           else
-
             day_start = @sensor.daily_cache.last.ran_at.tomorrow.beginning_of_day
             day_end = @sensor.daily_cache.last.ran_at.tomorrow.end_of_day
           end
@@ -95,20 +95,21 @@ module Snorby
           logit "[~] Building Classification Metrics", false
           update_classification_count
 
-          logit "[~] Building Severity Metrics\n\n", false
+          logit "[~] Building Severity Metrics", false
           Severity.all.each do |x|
             x.update(:events_count => Event.all(:"signature.sig_priority" => x.sig_id).count)
           end
-
+          
+          logit "[~] Preparing to Email Reports"
           send_weekly_report if Setting.weekly?
           send_monthly_report if Setting.monthly?
           ReportMailer.daily_report.deliver if Setting.daily?
            
         rescue PDFKit::NoExecutableError => e
-          logit "#{e}"
+          logit "NoExecutableError: #{e}"
         rescue => e
           logit "#{e}", false
-          logit "#{e.backtrace.first}", false
+          logit "[backtrace] #{e.backtrace.first}", false
           logit "Error: Unable to send report - please make sure your mail configurations are correct."
         end
 
@@ -154,10 +155,9 @@ module Snorby
         @cache = DailyCache.first_or_create(:ran_at => day_start, :sensor => @sensor)
 
         if event.empty?
-          logit "\n No Events"
+          logit "No Events"
         else
-
-          logit "\nNew Day: #{day_start} - #{day_end}", false
+          logit "New Day: #{day_start} - #{day_end}"
 
           data = {
             :event_count => fetch_event_count,
