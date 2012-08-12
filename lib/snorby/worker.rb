@@ -28,13 +28,13 @@ module Snorby
       
       case action.to_sym
       when :start
-        Worker.start
+        self.start
       when :stop
-        Worker.stop
+        self.stop
       when :restart
-        Worker.restart
+        self.restart
       when :zap
-        Worker.zap
+        self.zap
       end
       
     end
@@ -47,7 +47,19 @@ module Snorby
     def self.process
       if Worker.pid
         Snorby::Process.new(`ps -o ruser,pid,%cpu,%mem,vsize,rss,tt,stat,start,etime,command -p #{Worker.pid} |grep delayed_job |grep -v grep`.chomp.strip)
+      else
+        if self.pid
+          Snorby::Process.new(`ps -o ruser,pid,%cpu,%mem,vsize,rss,tt,stat,start,etime,command -p #{self.pid} |grep delayed_job |grep -v grep`.chomp.strip)
+        end
       end
+    end
+
+    def self.pid_path
+      @@pid_path
+    end
+
+    def self.pid_file
+      @@pid_file
     end
 
     def self.pid
