@@ -46,40 +46,45 @@ module Snorby
         @stop_date = DateTime.now.yesterday.end_of_day
 
         logit "\n[~~] Daily Cache Job", false
-        Sensor.all.each do |sensor|
-          logit "\n[~] Building .. "
-          @sensor = sensor
-
-          if @sensor.daily_cache.first.blank?
-
-             sensor_event = Event.first(:sid => @sensor.sid)
-        
-             next if sensor_event.blank?
-             
-             day_start =  sensor_event.timestamp.beginning_of_day
-             day_end = sensor_event.timestamp.end_of_day
-          else
-            day_start = @sensor.daily_cache.last.ran_at.tomorrow.beginning_of_day
-            day_end = @sensor.daily_cache.last.ran_at.tomorrow.end_of_day
+        begin
+          Sensor.all.each do |sensor|
+            @sensor = sensor
+            logit "\n[~] Building .. "
+  
+            if @sensor.daily_cache.first.blank?
+  
+               sensor_event = Event.first(:sid => @sensor.sid)
+          
+               next if sensor_event.blank?
+               
+               day_start =  sensor_event.timestamp.beginning_of_day
+               day_end = sensor_event.timestamp.end_of_day
+            else
+              day_start = @sensor.daily_cache.last.ran_at.tomorrow.beginning_of_day
+              day_end = @sensor.daily_cache.last.ran_at.tomorrow.end_of_day
+            end
+  
+  
+            #
+            # Process
+            #
+            while (day_start < day_end) do
+              @stime = day_start
+              @etime = day_end
+  
+              break if day_start >= @stop_date
+  
+              build_cache(day_start, day_end)
+  
+              day_start = (day_end + 1.day).beginning_of_day
+              day_end = (day_end + 1.day).end_of_day
+            end
+  
           end
-
-
-          #
-          # Process
-          #
-          while (day_start < day_end) do
-            @stime = day_start
-            @etime = day_end
-
-            break if day_start >= @stop_date
-
-            build_cache(day_start, day_end)
-
-            day_start = (day_end + 1.day).beginning_of_day
-            day_end = (day_end + 1.day).end_of_day
-          end
-
-        end
+        rescue => e
+          logit "[Error]#{e}", false
+          logit "[backtrace] #{e.backtrace}", false
+        end  
 
 
         begin
