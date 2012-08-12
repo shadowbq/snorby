@@ -8,61 +8,53 @@
 	
 	<events><%=@event_count%></events>
 	<metrics>
-		<src><![CDATA[
-		<%=@src_metrics%>
-		]]>	
-		</src>
-		<dst><![CDATA[
-		<%=@src_metrics%>
-		]]>	
-		</dst>
-		<tcp><![CDATA[
-		<%=@tcp%>
-		]]>	
-		</tcp>
-		<udp><![CDATA[
-		<%=@udp%>
-		]]>	
-		</udp>
-		<icmp><![CDATA[
-		<%=@icmp%>
-		]]>	
-		</icmp>
+		<sources>
+                <% xml_string = ""
+                @src_metrics.each{|k,v| xml_string << "<src>\n<ip>#{k}</ip>\n<count>#{v}</count>\n</src>" }
+                %>
+                <%=raw xml_string%>
+                </sources>
+                <destinations>
+                <% xml_string = ""
+                @dst_metrics.each{|k,v| xml_string << "<dst>\n<ip>#{k}</ip>\n<count>#{v}</count>\n</dst>" }
+                %>
+                <%=raw xml_string%>
+                </destinations>
+		
+		<tcp><%=@tcp.sum%></tcp>
+		<udp><%=@udp.sum%></udp>
+		<icmp><%=@icmp.sum%></icmp>
 	</metrics>
 	<severities>
-		<high><![CDATA[
-		<%=@high%>
-		]]>
-		</high>
-		<medium><![CDATA[
-		<%=@medium%>
-		]]>
-		</medium>
-		<low><![CDATA[
-		<%=@low%>
-		]]>
-		</low>
+		<high><%=@high.sum%></high>
+		<medium><%=@medium.sum%></medium>
+		<low><%=@low.sum%></low>
 	</severities>
 	<sensors>
-		<metrics><![CDATA[
+        <% @sensors.each do |sensor| %>
+	        <sensor>
+			<name><%=raw sensor.name %></name>
+			<count><%= sensor.events_count %></count>
+	        </sensor>
+	<% end %>  
+	</sensors>  
+	<sensor_metrics><![CDATA[
 		<%=@sensor_metrics%>
 		]]>
-		</metrics>
-		<counts>
-		<![CDATA[
-		<%=@sensors%>
-		]]>	
-		</counts>
-	</sensors>
-	<signatures>
-		<![CDATA[
-		<%=@signature_metrics%>
-		]]>
-	</signatures>
+       </sensor_metrics>
+       <signatures>
+                <% xml_string = ""
+                @signature_metrics.each{|k,v| xml_string << "<signature>\n<name>#{k}</name>\n<count>#{v}</count>\n</signature>" }
+                %>
+                <%=raw xml_string%>
+        </signatures>
+        <classifications>
+        <% @classifications.each do |classification| %>
+          <classification>
+            <name><%= classification.name %></name>
+            <count><%= classification.events_count %></count>
+          </classification>
+        <% end %>
+        </classifications>
 
-	<classifications>
-		<![CDATA[
-		<%=@classifications%>
-		]]>
-	</classifications>
 </snorby>
