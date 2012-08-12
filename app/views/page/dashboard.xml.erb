@@ -1,29 +1,68 @@
 <?xml version="1.0"?>
 <snorby dashboard_xml="1.0">
-<time>
-	<now><%=@now%></now>
-	<cache><%=@last_cache%></cache>
-</time>
-<range><%=@range%></range>
-<metrics>
-	<src><%=@src_metrics%></src>
-	<dst><%=@src_metrics%></dst>
-	<tcp><%=@tcp%></tcp>
-	<udp><%=@udp%></udp>
-	<icmp><%=@icmp%></icmp>
-</metrics>
-<severities>
-	<high><%=@high%></high>
-	<medium><%=@medium%></medium>
-	<low><%=@low%></low>
-</severities>
-<sensors>
+	<time>
+		<now><%=@now%></now>
+		<cache><%=@last_cache%></cache>
+		<range><%=@range%></range>
+	</time>
+	
+	<events><%=@event_count%></events>
 	<metrics>
-	<%=@sensor_metrics%>
+		<src><![CDATA[
+		<%=@src_metrics%>
+		]]>	
+		</src>
+		<dst><![CDATA[
+		<%=@src_metrics%>
+		]]>	
+		</dst>
+		<tcp><![CDATA[
+		<%=@tcp%>
+		]]>	
+		</tcp>
+		<udp><![CDATA[
+		<%=@udp%>
+		]]>	
+		</udp>
+		<icmp><![CDATA[
+		<%=@icmp%>
+		]]>	
+		</icmp>
 	</metrics>
-	<counts><%=@sensors.to_xml(:skip_instruct => true)%></counts>
-</sensors>
-<signatures><%=@signature_metrics%></signatures>
-<events><%=@event_count%></events>
-<classifications><%=@classifications.to_xml(:skip_instruct => true)%></classifications>
+	<severities>
+		<high><![CDATA[
+		<%=@high%>
+		]]>
+		</high>
+		<medium><![CDATA[
+		<%=@medium%>
+		]]>
+		</medium>
+		<low><![CDATA[
+		<%=@low%>
+		]]>
+		</low>
+	</severities>
+	<sensors>
+		<metrics><![CDATA[
+		<%=@sensor_metrics%>
+		]]>
+		</metrics>
+		<counts>
+		<![CDATA[
+		<%=@sensors%>
+		]]>	
+		</counts>
+	</sensors>
+	<signatures>
+		<![CDATA[
+		<%=@signature_metrics%>
+		]]>
+	</signatures>
+
+	<classifications>
+		<![CDATA[
+		<%=@classifications%>
+		]]>
+	</classifications>
 </snorby>
