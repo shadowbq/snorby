@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<snorby dashboard_xml="1.0">
+<time>
+	<now><%=@now%></now>
+	<cache><%=@last_cache%></cache>
+</time>
+<range><%=@range%></range>
+<metrics>
+	<src><%=@src_metrics.to_xml%></src>
+	<dst><%=@src_metrics.to_xml%></dst>
+	<tcp><%=@tcp%></tcp>
+	<udp><%=@udp%></udp>
+	<icmp><%=@icmp%></icmp>
+</metrics>
+<severities>
+	<high><%=@high%></high>
+	<medium><%=@medium%></medium>
+	<low><%=@low%></low>
+</severities>
+<sensors>
+	<metrics>
+	<%=@sensor_metrics.to_xml%>
+	</metrics>
+	<counts><%=@sensors.to_xml%></counts>
+</sensors>
+<signatures><%=@signature_metrics.to_xml%></signatures>
+<events><%=@event_count%></events>
+<classifications><%=@classifications.to_xml%></classifications>
+<favorite_count><%=@favers.to_xml%></favorite_count>
+</snorby>
