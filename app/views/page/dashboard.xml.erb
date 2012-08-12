@@ -6,8 +6,8 @@
 </time>
 <range><%=@range%></range>
 <metrics>
-	<src><%=@src_metrics.to_xml%></src>
-	<dst><%=@src_metrics.to_xml%></dst>
+	<src><%=@src_metrics%></src>
+	<dst><%=@src_metrics%></dst>
 	<tcp><%=@tcp%></tcp>
 	<udp><%=@udp%></udp>
 	<icmp><%=@icmp%></icmp>
@@ -19,12 +19,11 @@
 </severities>
 <sensors>
 	<metrics>
-	<%=@sensor_metrics.to_xml%>
+	<%=@sensor_metrics%>
 	</metrics>
-	<counts><%=@sensors.to_xml%></counts>
+	<counts><%=@sensors.to_xml(:skip_instruct => true)%></counts>
 </sensors>
-<signatures><%=@signature_metrics.to_xml%></signatures>
+<signatures><%=@signature_metrics%></signatures>
 <events><%=@event_count%></events>
-<classifications><%=@classifications.to_xml%></classifications>
-<favorite_count><%=@favers.to_xml%></favorite_count>
+<classifications><%=@classifications.to_xml(:skip_instruct => true)%></classifications>
 </snorby>
