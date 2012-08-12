@@ -13,6 +13,9 @@ class EventsController < ApplicationController
     respond_to do |format|
       format.html {render :layout => true}
       format.js
+      format.json { render :json => @events }
+      format.xml { render :xml => @events }
+      format.csv { render :json => @events.to_csv }
     end
   end
 
@@ -48,6 +51,9 @@ class EventsController < ApplicationController
     respond_to do |format|
       format.html {render :layout => true}
       format.js
+      format.json { render :json => @events }
+      format.xml { render :xml => @events }
+      format.csv { render :json => @events.to_csv }
     end  
   end
 
@@ -76,6 +82,9 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       format.html { render :layout => false }
+      format.json { render :json => @rule }
+      format.xml { render :xml => @rule }
+      format.csv { render :json => @rule.to_csv }
     end
   end
 
