@@ -12,8 +12,8 @@ class JobsController < ApplicationController
     respond_to do |format|
       format.html
       format.js
-      format.xml  { render :xml => {@worker, @jobs} }
-      format.json  { render :json => {@worker, @jobs} }
+      format.xml  { render :xml => {:worker => @worker, :jobs => @jobs} }
+      format.json  { render :json => {:worker => @worker, :jobs => @jobs} }
     end
   end
 
