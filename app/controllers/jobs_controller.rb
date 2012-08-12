@@ -5,11 +5,15 @@ class JobsController < ApplicationController
   def index
     @jobs = Snorby::Jobs.find.all
     @process = Snorby::Worker.process
+    @worker = Snorby::Worker
+    @setting = Setting
+    @snorbyreachable = Snorby::reachable?
     
     respond_to do |format|
       format.html
       format.js
-      format.xml  { render :xml => @jobs }
+      format.xml  { render :xml => {@worker, @jobs} }
+      format.json  { render :json => {@worker, @jobs} }
     end
   end
 
