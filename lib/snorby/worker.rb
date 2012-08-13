@@ -45,8 +45,8 @@ module Snorby
     end
 
     def self.process
-      if Worker.pid
-        Snorby::Process.new(`ps -o ruser,pid,%cpu,%mem,vsize,rss,tt,stat,start,etime,command -p #{Worker.pid} |grep delayed_job |grep -v grep`.chomp.strip)
+      if Snorby::Worker.pid
+        Snorby::Process.new(`ps -o ruser,pid,%cpu,%mem,vsize,rss,tt,stat,start,etime,command -p #{Snorby::Worker.pid} |grep delayed_job |grep -v grep`.chomp.strip)
       else
         if self.pid
           Snorby::Process.new(`ps -o ruser,pid,%cpu,%mem,vsize,rss,tt,stat,start,etime,command -p #{self.pid} |grep delayed_job |grep -v grep`.chomp.strip)
@@ -67,24 +67,24 @@ module Snorby
     end
 
     def self.running?
-      return true if File.exists?(@@pid_file) && !Worker.process.raw.empty?
+      return true if File.exists?(@@pid_file) && !Snorby::Worker.process.raw.empty?
       false
     end
     
     def self.start
-      `#{Rails.root}/script/delayed_job start --pid-dir #{@@pid_path} RAILS_ENV=#{Rails.env}`
+      `RAILS_ENV=#{Rails.env} #{Rails.root}/script/delayed_job start --pid-dir #{@@pid_path}`
     end
     
     def self.stop
-      `#{Rails.root}/script/delayed_job stop --pid-dir #{@@pid_path} RAILS_ENV=#{Rails.env}`
+      `RAILS_ENV=#{Rails.env} #{Rails.root}/script/delayed_job stop --pid-dir #{@@pid_path}`
     end
 
     def self.restart
-      `#{Rails.root}/script/delayed_job restart --pid-dir #{@@pid_path} RAILS_ENV=#{Rails.env}`
+      `RAILS_ENV=#{Rails.env} #{Rails.root}/script/delayed_job restart --pid-dir #{@@pid_path}`
     end
     
     def self.zap
-      `#{Rails.root}/script/delayed_job zap --pid-dir #{@@pid_path} RAILS_ENV=#{Rails.env}`
+      `RAILS_ENV=#{Rails.env} #{Rails.root}/script/delayed_job zap --pid-dir #{@@pid_path}`
     end
 
   end
