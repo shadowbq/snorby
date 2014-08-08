@@ -57,16 +57,6 @@ class SettingsController < ApplicationController
     Snorby::Worker.restart if Snorby::Worker.running?
     redirect_to jobs_path
   end
-  
-  def reset_sensor_cache
-    Snorby::Jobs.reset_cache('sensor')
-    redirect_to jobs_path
-  end
-  
-  def reset_daily_cache
-    Snorby::Jobs.reset_cache('daily')
-    redirect_to jobs_path
-  end
 
   def reset_cache
     Snorby::Jobs.reset_cache('all')

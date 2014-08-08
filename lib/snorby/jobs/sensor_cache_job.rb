@@ -1,28 +1,9 @@
-# Snorby - All About Simplicity.
-#
-# Copyright (c) 2010 Dustin Willis Webber (dustin.webber at gmail.com)
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 module Snorby
   module Jobs
 
     class SensorCacheJob < Struct.new(:verbose)
 
       include Snorby::Jobs::CacheHelper
-      
       attr_accessor :events, :last_cache, :cache, :last_event
 
       def perform
@@ -81,7 +62,7 @@ module Snorby
 
               end
 
-              #logit "Building Empty Cache - #{start_time} - #{@stop_time}"
+              logit "Building Empty Cache - #{start_time} - #{@stop_time}"
               tmp = Cache.first_or_create(:sid => @sensor.sid, :ran_at => start_time)
               tmp.update(:updated_at => DateTime.now)
               #next
@@ -132,22 +113,153 @@ module Snorby
 
           end # Sensor.all.each END
 
-          logit "\n[~] Building Sensor Metrics", false
-          Sensor.all.each do |x|
-            x.update(:events_count => Event.all(:sid => x.sid).count)
+
+          begin
+
+            logit "\n[~] Building Sensor Metrics", false
+            Sensor.all.each do |x|
+              x.events_count = Event.count(:sid => x.sid)
+              x.save!
+            end
+
+            logit "[~] Building Signature Metrics", false
+            update_signature_count
+
+            logit "[~] Building Classification Metrics", false
+            update_classification_count
+
+            logit "[~] Building Severity Metrics\n\n", false
+            Severity.all.each do |x|
+              x.update(:events_count => Event.all(:"signature.sig_priority" => x.sig_id).count)
+            end
+
+            # send_weekly_report if Setting.weekly?
+            # send_monthly_report if Setting.monthly?
+            # ReportMailer.daily_report.deliver if Setting.daily?
+
+            User.all.each do |user|
+              begin
+                Time.zone = user.timezone
+                current_time = Time.now.in_time_zone(user.timezone)
+                now = current_time.to_date + 0.second
+                yesterday = current_time.yesterday.to_date + 0.second
+
+                if Setting.daily?
+                  last_report_to_date = if user.last_daily_report_at.present?
+                                          user.last_daily_report_at.in_time_zone(user.timezone).to_date + 0.second
+                                        else
+                                          (Time.now - 99.days).in_time_zone(user.timezone).to_date + 0.second
+                                        end
+
+                  logit "Daily: #{now}, #{last_report_to_date}", false
+
+                  if now > last_report_to_date
+                    start_time = yesterday
+                    end_time = now - 1.second
+
+                    # send report
+                    logit "Sending daily report for user #{user.name} #{start_time} #{start_time.strftime('%Z')} - #{end_time} #{now}, #{last_report_to_date}", false
+                    user.send_daily_report(start_time, end_time)
+
+                    user.last_daily_report_at = end_time + 1.second
+                    user.save!
+                  end
+                end
+
+
+                # Weekly
+                if Setting.weekly?
+                  current_week = current_time.strftime('%Y%W').to_i
+
+                  last_weekly_to_date = if user.last_weekly_report_at.present?
+                                          user.last_weekly_report_at.to_i 
+                                        else
+                                          0 
+                                        end
+
+                  logit "Weekly: #{now}, #{current_week}, #{last_weekly_to_date}", false
+                  if current_week > last_weekly_to_date
+
+                    logit "Sending weekly report for user #{user.name} ", false
+                    user.send_weekly_report
+                    user.last_weekly_report_at = current_week
+                    user.save!
+                  end
+                end
+
+                # Monthly
+                if Setting.monthly?
+                  current_month = current_time.strftime('%Y%m').to_i
+
+                  last_monthly_to_date = if user.last_monthly_report_at.present?
+                                           user.last_monthly_report_at.to_i 
+                                         else
+                                           0 
+                                         end
+
+                  logit "monthly: #{now}, #{current_month}, #{last_monthly_to_date}", false
+                  if current_month > last_monthly_to_date
+
+                    logit "Sending monthly report for user #{user.name} ", false
+                    user.send_monthly_report
+                    user.last_monthly_report_at = current_month
+                    user.save!
+                  end
+                end
+
+                # incident emails
+                if user.email_reports
+                  current_hour = current_time.change(:min => 0)
+                  current_half_hour = if (current_time > current_hour + 30.minutes)
+                    current_hour + 30.minutes
+                  else
+                    current_hour
+                  end
+
+                  last_report_half_hour = if user.last_email_report_at.present?
+                                          user.last_email_report_at.in_time_zone(user.timezone)
+                                        else
+                                          (Time.now - 99.days).in_time_zone(user.timezone)
+                                        end
+
+                  p "email report times: #{current_half_hour} #{last_report_half_hour}" 
+                  if current_half_hour > last_report_half_hour 
+
+                    report_cache = []
+                    Sensor.each do |sensor|
+                      report_cache.push(sensor.cache.last)
+                    end
+
+                    logit "sending email report: #{current_half_hour}, #{last_report_half_hour} #{current_time.to_i} #{last_report_half_hour.to_i}", false
+                    user.send_update_report(report_cache)
+                    user.last_email_report_at = current_half_hour
+                    user.save!
+                  end
+
+
+                end
+
+              ensure
+                Time.zone = Rails.configuration.time_zone || Time.now.zone
+              end
+            end
+
+          rescue PDFKit::NoExecutableError => e
+            logit "#{e}"
+          rescue => e
+            logit "#{e}", false
+            logit "#{e.backtrace.first}", false
+            logit "Error: Unable to send report - please make sure your mail configurations are correct."
           end
 
-          logit "[~] Building Signature Metrics", false
-          update_signature_count
-
-          logit "[~] Building Classification Metrics", false
-          update_classification_count
-
-          logit "[~] Building Severity Metrics\n\n", false
-          Severity.all.each do |x|
-            x.update(:events_count => Event.all(:"signature.sig_priority" => x.sig_id).count)
+          # Autodrop Logic
+          if Setting.autodrop?
+            logit "Dropping old events", false
+            while Event.count > Setting.autodrop_count.value.to_i do
+              autodrop = Event.all(:limit => 1000, :order => :timestamp.asc)
+              autodrop.destroy!
+            end
           end
-
 
           Snorby::Jobs.sensor_cache.destroy! if Snorby::Jobs.sensor_cache?
 
@@ -158,6 +270,14 @@ module Snorby
         puts e
         puts e.backtrace
         @cache.destroy! if defined?(@cache)
+      end
+
+      def send_weekly_report
+        ReportMailer.weekly_report.deliver if @stop_date.day == @stop_date.end_of_week.day
+      end
+
+      def send_monthly_report
+        ReportMailer.monthly_report.deliver if @stop_date.day == @stop_date.end_of_month.day
       end
 
       private
@@ -190,8 +310,8 @@ module Snorby
         def split_events_and_process(start_time, end_time)
 
           event = db_select(%{
-            select cid from event where timestamp >= '#{@stime.to_s(:db)}' 
-            and timestamp < '#{@etime.to_s(:db)}' and sid = #{@sensor.sid.to_i} 
+            select cid from event where timestamp >= '#{@stime.strftime("%Y-%m-%d %H:%M:%S")}' 
+            and timestamp < '#{@etime.strftime("%Y-%m-%d %H:%M:%S")}' and sid = #{@sensor.sid.to_i} 
             order by timestamp desc limit 1
           })
 

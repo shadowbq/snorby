@@ -48,7 +48,7 @@
 			
 			<p>
 				<%= check_box_tag '[settings][update_notifications]', 0, (Setting.update_notifications ? Setting.find(:update_notifications) : nil) %> <%= label_tag 'Enable Snorby Update Notifications' %><br />
-		        <i>(Notification reminder when a new Snorby build is release using http://snorby.org/version)</i>
+        		<i>(Notification reminder when a new Snorby build is release using http://snorby.org/version)</i>
 			</p>
 
 		</div>
@@ -90,7 +90,6 @@
 				<%= check_box_tag '[settings][verbose_logs]', 1, (Setting.verbose_logs ? Setting.find(:verbose_logs) : nil) %> <%= label_tag 'Verbose Logs' %><br />
 				<i>(This option enables verbose logs for the Worker and Jobs that perform caching and geoip tagging.)</i><br />
 			</p>
-
 
 			<p>
 		      <%= check_box_tag '[settings][autodrop]', 1, Setting.find(:autodrop) %> <%= label_tag 'Prune database when event count is greater than' %>

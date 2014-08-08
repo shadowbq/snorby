@@ -1,16 +1,26 @@
 class PageController < ApplicationController
 
   helper_method :sort_column, :sort_direction, :sort_page
+  include Snorby::Jobs::CacheHelper
 
   def dashboard
+
     @now = Time.now
 
     @range = params[:range].blank? ? 'last_24' : params[:range]
 
+    if @range.to_sym == :custom
+      begin
+        @custom_start = Time.zone.parse(params[:start]).utc.strftime('%Y-%m-%d %H:%M:%S')
+        @custom_end = Time.zone.parse(params[:end]).utc.strftime('%Y-%m-%d %H:%M:%S')
+      rescue => e
+      end
+    end
+
     set_defaults
 
-    @src_metrics = @cache.src_metrics(10)
-    @dst_metrics = @cache.dst_metrics(10)
+    @src_metrics = @cache.src_metrics
+    @dst_metrics = @cache.dst_metrics
 
     @tcp = @cache.protocol_count(:tcp, @range.to_sym)
     @udp = @cache.protocol_count(:udp, @range.to_sym)
@@ -20,39 +30,32 @@ class PageController < ApplicationController
     @medium = @cache.severity_count(:medium, @range.to_sym)
     @low = @cache.severity_count(:low, @range.to_sym)
     
-    @sensor_metrics = @cache.sensor_metrics(@range.to_sym, Sensor.all.length)
+    @sensor_metrics = @cache.sensor_metrics(@range.to_sym)
 
-    @signature_metrics = @cache.signature_metrics(10)
+    @signature_metrics = @cache.signature_metrics
 
     @event_count = @cache.all.map(&:event_count).sum
      
-    if @sensor_metrics.last
-      @axis = @sensor_metrics.last[:range].join(',')
-      i = 0
-      @ticks = @sensor_metrics.last[:range].collect { |ticks| 
-        i = i+1 
-        [i, ticks.gsub("'","").to_i] 
-      }
+    @axis = if @sensor_metrics.last
+      @sensor_metrics.last[:range].join(',')
+    else
+      ""
     end
 
-    @series = ""
-    @sensor_metrics.each_index { |i| @series = @series + "s#{i}, " }
-    @series.chomp!(", ")
-    
     @classifications = Classification.all(:order => [:events_count.desc])
     @sensors = Sensor.all(:limit => 5, :order => [:events_count.desc])
     @favers = User.all(:limit => 5, :order => [:favorites_count.desc])
 
     @last_cache = @cache.cache_time
 
-    sigs = Event.all(:limit => 5, :order => [:timestamp.desc], :fields => [:sig_id], :unique => true).map(&:signature).map(&:sig_id)
+    sigs = latest_five_distinct_signatures
+
     @recent_events = [];
     sigs.each{|s| @recent_events << Event.last(:sig_id => s) }
 
     respond_to do |format|
       format.html # { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf.html.erb' }
       format.js
-      format.xml
       format.pdf do
         render :pdf => "Snorby Report - #{@start_time.strftime('%A-%B-%d-%Y-%I-%M-%p')} - #{@end_time.strftime('%A-%B-%d-%Y-%I-%M-%p')}", :template => "page/dashboard.pdf.erb", :layout => 'pdf.html.erb', :stylesheets => ["pdf"]
       end
@@ -61,6 +64,7 @@ class PageController < ApplicationController
   end
 
   def search
+    @json = Snorby::Search.json
   end
 
   def search_json
@@ -69,22 +73,23 @@ class PageController < ApplicationController
 
   def force_cache
     Snorby::Jobs.force_sensor_cache
-    self.cache_status
+    render :json => {
+      :caching => Snorby::Jobs.caching?,
+      :problems => Snorby::Worker.problems?,
+      :running => Snorby::Worker.running?,
+      :daily_cache => Snorby::Jobs.daily_cache?,
+      :sensor_cache => Snorby::Jobs.sensor_cache?
+    }
   end
 
   def cache_status
-    current_cache_status = {
-        :caching => Snorby::Jobs.caching?,
-        :problems => Snorby::Worker.problems?,
-        :running => Snorby::Worker.running?,
-        :daily_cache => Snorby::Jobs.daily_cache?,
-        :sensor_cache => Snorby::Jobs.sensor_cache?
-      }
-
-    respond_to do |format|
-      format.json { render :json => current_cache_status }
-      format.xml { render :xml => current_cache_status.to_xml }
-    end
+    render :json => {
+      :caching => Snorby::Jobs.caching?,
+      :problems => Snorby::Worker.problems?,
+      :running => Snorby::Worker.running?,
+      :daily_cache => Snorby::Jobs.daily_cache?,
+      :sensor_cache => Snorby::Jobs.sensor_cache?
+    }
   end
 
   def results
@@ -146,7 +151,13 @@ class PageController < ApplicationController
 
   def set_defaults
 
+    @now = Time.zone.now
+
     case @range.to_sym
+    when :custom
+      @cache = Cache.all(:ran_at.gte => @custom_start, :ran_at.lte => @custom_end)
+      @start_time = Time.zone.parse(@custom_start).beginning_of_day
+      @end_time = Time.zone.parse(@custom_end).end_of_day
     when :last_24
 
       @start_time = @now.yesterday

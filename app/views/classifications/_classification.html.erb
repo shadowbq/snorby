@@ -1,6 +1,6 @@
 <tr>
 	<td class='first'><%= classification.id %></td>
-	<td><%= classification.name %></td>
+	<td><%= link_to classification.name, results_path(:title => "#{classification.name}", "match_all"=>"true", "search"=>{"sensor"=>{"column"=>"classification", "operator"=>"is", "value"=> classification.id } }), :title => classification.name %></td>
 	<td><%= number_with_delimiter classification.events_count %></td>
 	
 	<td class='chart'><%= css_chart(classification.event_percentage) %></td>

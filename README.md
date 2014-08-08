@@ -10,8 +10,6 @@
 
 Snorby is a ruby on rails web application for network security monitoring that interfaces with current popular intrusion detection systems (Snort, Suricata and Sagan). The basic fundamental concepts behind Snorby are **simplicity**, organization and power. The project goal is to create a free, open source and highly competitive application for network monitoring for both private and enterprise use.
 
-* [Snorby Screenshot](http://snorby.org/snorby.png)
-
 ## Demo
 
 URL: [http://demo.snorby.org](http://demo.snorby.org)
@@ -23,31 +21,12 @@ Pass: snorby
 **NOTE** For the full packet capture HTTP basic AUTH use the same credentials.
 
 ## Requirements
-* Rack enabled WebServer -- Apache + Passenger / Ngnix + Passenger / Unicorn / Mongrel
-* IDS -- Snort / Suricata / Sagan
+
+* Snort
 * Ruby >= 1.9.2
-* Ruby Gems >= 1.3.7
-* Bundler ~> 1.0
-* Rails = 3.1.0 (Set in Gemfile by bundler)
-* ImageMagick >= 6.6.4-5
-* Mysql Database >= 5.2
+* Rails = 3.1.12
 
 ## Install
-
-* Install Dependencies
-
-	* Mac OSX:
-	
-		`brew install imagemagick`
-
-	* Linux:
-	
-		`apt-get install imagemagick libmagickwand-dev`
-
-	* FreeBSD:
-                
-		`pkg_add -r ImageMagick mysql55-server libxml2 libxslt wkhtmltopdf`
-		`cd /usr/ports/x11-fonts/webfonts && make clean && sudo make install`
 
 * Get Snorby from the download section or use the latest edge release via git.
 
@@ -70,11 +49,11 @@ Pass: snorby
 
 * Install Gem Dependencies  (make sure you have bundler installed: `gem install bundler`)
 
-	`bundle install`
+	`$ bundle install`
 	
 	* NOTE: If you get missing gem issues in production use `bundle install --deployment`
 	
-		If you have run `bundle package`, the cached gems will be used automatically. 
+		If you have run `bundle package`, the gems wil be cached in 'vendor/cache' and will be used automatically. 
 
 	* If your system gems are updated beyond the gemfile.lock you should use as an example `bundle exec rake snorby:setup` 
 
@@ -88,19 +67,20 @@ Pass: snorby
 	
 	`mysql -u root -p`
 
-	`mysql> create user 'snorby'@'localhost' identified by 's3cr3tsauce';`
+	`mysql> create user 'snorby'@'localhost' identified by 'sn0rbys3cr3t';`
 	
 	`mysql> grant all privileges on snorby.* to 'snorby'@'localhost';`
 
-* Edit The Snorby Configuration Files
+* Copy the Snorby Configuration File Examples
+
+	`cp config/snorby_config.yml.example config/snorby_config.yml`
+	`cp config/database.yml.example config/database.yml`
+
+* Fill out settings for config/database.yml && config/snorby_config.yml
+
+	`vi config/snorby_config.yml`
+	`vi config/database.yml`
 	
-	`cp config/snorby_config.example.yml config/snorby_config.yml`
-
-	`cp config/database.example.yml config/database.yml`
-	
-	* Fill out settings for config/database.yml && config/snorby_config.yml
-
-
 * Run The Snorby Setup
 
 	`RAILS_ENV=production bundle exec rake snorby:setup`
@@ -161,38 +141,8 @@ You can open the rails console at anytime and interact with the Snorby environme
 	# If the Snorby worker is running this will start the cache jobs and set the run_at time for the current time.
 	Snorby::Jobs.run_now!
 
-## Contributors
-
-Dustin Willis Webber
-ovargas27
-José Antonio Parra
-Antonio Marques
-emilecantin
-Giovani Generali
-Erich Menge
-Ursinho
-Shadowbq
-Yabbo
-
 ## License
 
-Snorby - All About Simplicity.
+Please refer to the LICENSE file found in the root of the snorby project.
 
-Copyright (c) 2010 Dustin Willis Webber (dustin.webber at gmail.com)
 
-Snorby is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-* Note: The snorby source code is 100% free and open source 
-The below license only applies to snorby source code which can be identified with the below license in each file.

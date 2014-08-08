@@ -17,21 +17,21 @@ class Signature
   
   has n, :sig_references, :parent_key => :sig_id, :child_key => [ :sig_id ]
 
-  property :sig_id, Serial, :key => true, :index => true
+  property :sig_id, Serial, :key => true, :index => true, :min => 0
 
-  property :sig_class_id, Integer, :index => true
+  property :sig_class_id, Integer, :index => true, :min => 0
 
   property :sig_name, Text
   
-  property :sig_priority, Integer, :index => true
+  property :sig_priority, Integer, :index => true, :min => 0
     
-  property :sig_rev, Integer, :lazy => true
+  property :sig_rev, Integer, :lazy => true, :min => 0
       
-  property :sig_sid, Integer, :lazy => true
+  property :sig_sid, Integer, :lazy => true, :min => 0
 
-  property :sig_gid, Integer, :lazy => true
+  property :sig_gid, Integer, :lazy => true, :min => 0
 
-  property :events_count, Integer, :index => true, :default => 0
+  property :events_count, Integer, :index => true, :default => 0, :min => 0
 
   def refs
     sig_references 
@@ -53,9 +53,9 @@ class Signature
       if in_words
         "#{self.events_count}/#{count}"
       else
-        "%.2f" % ((self.events_count.to_f / count.to_f) * 100).round(2)
+        return 0 if Event.count.zero?
+         "%.2f" % ((self.events_count.to_f / count.to_f) * 100).round(2)
       end
-
     rescue FloatDomainError
       0
     end

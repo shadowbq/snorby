@@ -1,13 +1,15 @@
 require 'snorby/model/counter'
-
 class User
   
   include DataMapper::Resource
   include DataMapper::Validate
-  include Paperclip::Resource
+  # include Paperclip::Resource
   include Snorby::Model::Counter
+  # include Rails.application.routes.url_helpers
+  
+  # include Rails.application.routes.url_helpers
 
-  cattr_accessor :current_user
+  cattr_accessor :current_user, :snorby_url, :current_json
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
@@ -41,10 +43,10 @@ class User
   # 
   # property :avatar_updated_at, DateTime
   
-  property :per_page_count, Integer, :index => true, :default => 25
+  property :per_page_count, Integer, :index => true, :default => 45
   
   # Full name of the user
-  property :name, String, :lazy => true, :lazy => true
+  property :name, String, :lazy => true
   
   # The timezone the user lives in
   property :timezone, String, :default => 'UTC', :lazy => true
@@ -56,24 +58,36 @@ class User
   property :enabled, Boolean, :default => true
 
   # Define if get avatar from gravatar.com or not
-  property :gravatar, Boolean, :default => false
+  property :gravatar, Boolean, :default => true
   
   # Define created_at and updated_at timestamps
   timestamps :at
+  property :created_at, ZonedTime
+  property :updated_at, ZonedTime
+  property :last_sign_in_at, ZonedTime
 
-  has_attached_file :avatar,
-  :styles => {
-    :large => "500x500>",
-    :medium => "300x300>",
-    :small => "100x100#"
-  }, :default_url => '/images/default_avatar.png', :processors => [:cropper],
-    :whiny => false
+  # for sure with socket.io sessions
+  property :online, Boolean, :default => false
 
-  ##validates_attachment_content_type :avatar, :content_type => ["image/png", "image/gif", "image/jpeg"]
+  # property :avatar, Text, :default => false
+  # has_attached_file :avatar,
+  # :styles => {
+    # :large => "500x500>",
+    # :medium => "300x300>",
+    # :small => "100x100#"
+  # }, :default_url => '/images/default_avatar.png', :processors => [:cropper],
+    # :whiny => false
 
-  validates_attachment_content_type :avatar, :content_type => ['image/jpeg', 'image/gif', 'image/png', 'image/pjpeg', 'image/x-png'], 
-  :message => 'Uploaded file is not an image', 
-  :if => Proc.new { |profile| profile.avatar.file? }
+  # validates_attachment_content_type :avatar, :content_type => ['image/jpeg', 'image/gif', 'image/png', 'image/pjpeg', 'image/x-png'], 
+  # :message => 'Uploaded file is not an image', 
+  # :if => Proc.new { |profile| profile.avatar.file? }
+
+  property :last_daily_report_at, ZonedTime, :default => Time.zone.now
+  property :last_weekly_report_at, Integer, :default => Time.zone.now.strftime("%Y%W")
+  property :last_monthly_report_at, Integer, :default => Time.zone.now.strftime("%Y%m")
+
+  property :last_email_report_at, ZonedTime
+  property :email_reports, Boolean, :default => false
 
   has n, :notifications, :constraint => :destroy
 
@@ -95,6 +109,47 @@ class User
   #
   def to_s
     self.name.to_s
+  end
+
+  def avatar
+    default_url = File.join(::User.snorby_url, "/images/default_avatar.png")
+    return default_url unless self.gravatar
+
+    email_address = self.email.downcase
+
+    # create the md5 hash
+    hash = Digest::MD5.hexdigest(email_address)
+    "https://gravatar.com/avatar/#{hash}.png?s=256&d=#{CGI.escape(default_url)}"
+  end
+
+  def in_json
+    # create the md5 hash
+    hash = Digest::MD5.hexdigest(self.email)
+    #"https://gravatar.com/avatar/#{hash}.png?s=256&d=#{CGI.escape(default_url)}"
+    data = self.attributes
+    data[:gravatar_hash] = hash
+    data[:classify_count] = classify_count
+    data
+  end
+
+  def classify_count
+    Event.count(:user_id => self.id.to_i) 
+  end
+
+  def send_daily_report(start_time, end_time)
+    ReportMailer.daily_report("#{name} <#{email}>", timezone).deliver
+  end
+
+  def send_weekly_report
+    ReportMailer.weekly_report("#{name} <#{email}>", timezone).deliver
+  end
+
+  def send_monthly_report
+    ReportMailer.monthly_report("#{name} <#{email}>", timezone).deliver
+  end
+
+  def send_update_report(data)
+    ReportMailer.update_report("#{name} <#{email}>", data, timezone).deliver
   end
 
   def accepts_note_notifications?(event=false)

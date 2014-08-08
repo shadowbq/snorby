@@ -7,10 +7,11 @@ module ApplicationHelper
       # time.strftime('%A, %b %d, %Y at %l:%M:%S %p')
     # end
 
+    time_zone = Time.zone.parse(DateTime.now.to_s).strftime('%Z')
     time_string = '%A, %b %d, %Y at %l:%M:%S %p'
-    time_string = '%a, %b %d, %y at %I:%M:%S %p' if short
+    time_string = '%D %I:%M %p' if short
 
-    time.strftime(time_string)
+    "#{time.strftime(time_string)} #{time_zone}"
   end
 
   def geoip?
@@ -37,7 +38,7 @@ module ApplicationHelper
   end
 
   def pretty_time(time)
-    time.strftime('%A, %B %d, %Y %I:%M %p')
+    time.strftime(format)
   end
 
   def format_note_body(text)
@@ -190,7 +191,6 @@ module ApplicationHelper
   def worker_status(show_image=false)
 
     validations = [{:check => Snorby::Jobs.sensor_cache?, :enabled => true, :desc => "Sensor Cache Job"},
-                   {:check=> Snorby::Jobs.daily_cache?, :enabled => true, :desc => "Daily Cache Job"},
                    {:check=> Snorby::Jobs.geoip_update?, :enabled => Setting.geoip?, :desc => "GeoIP Update Job"}
                   ]
 

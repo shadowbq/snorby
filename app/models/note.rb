@@ -12,7 +12,9 @@ class Note
   
   property :body, Text, :lazy => true
   
-  timestamps :at
+  # timestamps :at
+  property :created_at, ZonedTime
+  property :updated_at, ZonedTime
   
   belongs_to :user
   
@@ -34,6 +36,15 @@ class Note
     user = self.user
     event.update(:notes_count => event.notes_count - 1) if event
     user.update(:notes_count => user.notes_count - 1) if user
+  end
+
+  def in_json
+    {
+      :user => user.in_json,
+      :body => body,
+      :created_at => created_at,
+      :updated_at => updated_at
+    }
   end
 
   def html_id

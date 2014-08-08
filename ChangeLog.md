@@ -1,14 +1,112 @@
-# 2.5.1.1
-  * Removed HighCharts due to commercial licensing requirement
-  * Replaced Dashboard charting with jqplot (www.jqplot.com) a GPL2 compliant charting library.
-  * Moved Signatures from admin section to standard menu
-  * Removed Duplicate Sensors menu entry in admin section
-  * Updated Readme.md
-  * Updated Database Seed script to support CAS Authentication
-  * Change Database yml file to use explicit Databases for Rails ENV.
-  * Updated Jammit and Rack Gems to quiet errors.
-  * Fixed Bug that stopped Cache from to caching all sensors 
+# Snorby 2.6.2
+
+  * Feature Request - Add search criteria 'HAS NOTE' #263
+  * Cannot search for Unclassified events #189
+  * Long event signatures bleed into timestamp field #279
+  * Saved Search EDIT not shown (can't edit)') #280
+  * BUG - Functionality - 'Click to Change' on Sensor Page #284
+  * BUG - Functionality - Clicking on Signature graph brings up blank search #287
+  * Removed old deps from Gemfile
+  * Fixed isse with Snorby::Worker.problems? returning true - DelayedJob check was not removed.
+  * Index added to cache tables / column ran_at - Render speed up
+
+# Snorby 2.6.1
+
+ * Session view now sorts by timestamp
+ * Session view now updates periodically
+ * fix dashboard/cache issues with timezone logic #274
+ * fix asset name overflow issues #270
+ * fix view event signatures search #276 
+
+# Snorby 2.6.0
   
+  ** NOTICE **
+  
+    To Current and Future Users of Snorby,
+    
+    On November 2012, I started Threat Stack, a company with two 
+    
+    colleagues to achieve my vision of building the worlds best Incident 
+    
+    Response system. I have transferred ownership of Snorby into this 
+    
+    new entity so that it can continue to grow and become part of a much 
+    
+    larger ecosystem of incredible products the team and I are developing right now.
+    
+    Rest assured, Snorby will always remain free, open-source, and most 
+    
+    importantly, useful. We are excited about what the future holds for 
+    
+    Snorby and the security industry and hope you will join us on this 
+    
+    exciting journey.
+    
+    Thank you,
+
+    Dustin Webber
+    
+    Creator of Snorby 
+    
+    Co-Founder CTO of Threat Stack, Inc.
+    
+
+  1. Time zone support. 
+    You can now change your timezone and view events in the the time 
+    your comfortable with. 
+
+    ** NOTICE ** Snorby will assume the events in the database are set to the timezone of the box.
+    If the timezone of the box is not auto-detected, or if your boxes timezone does not match the timezone of the
+    event data in the database, you can set the global timezone in config/snorby_config.yml using the `time_zone` parameter.
+    
+    Example: http://t.co/y2m4go7Pjk
+    
+    The time zone config string should be a valid time zone configuration from /usr/share/zoneinfo, e.g. "Europe/Berlin"
+  
+  2. Asset tagging. 
+    Manually change IP address to a name thats more familiar. Or bulk 
+    upload an asset list using the upload form on the `asset names` admin section.
+  
+  3. Event emails. 
+    You can now get email notifcations every 30 mins with an event summary and stats.
+
+  * The session view is now the default.
+  * Major Bug fixes
+  * Fixed issue with signature name contains on the adv. search form
+  * Fixed range issue on pdf reports with the event graph
+  * Gem vewrsion updates
+  * Rails version bump
+  * Fixed typo in sensor controller before_filter
+
+# Snorby 2.5.6
+
+  * Fix xml user information disclosure - reported by Joshua Heiks (@solhive)
+  * Multiple bug fixes (dashboard logic/event)
+
+# Snorby 2.5.4/5
+
+  * Patch Multiple vulnerabilities in parameter parsing in Action Pack (CVE-2013-0156)
+  * Fix json parsing issue with new SearchRule()
+
+  ** UPDATE NOTE:
+  Make sure to run `bundle update` before you run `RAILS_ENV=production bundle exec rake snorby:update`
+
+# Snorby 2.5.3
+
+  ** NOTE **
+
+    This update is required to use the Snorby Mobile application.
+
+* Add json API
+* Fixed forgot password validation feedback
+
+# Snorby 2.5.2
+
+* License Changed to GPLv3 - Please review the License file.
+* You can now delete sensors.
+* Timezone added to all DateTime
+
+* Note: Make sure to run bundle exec rake snorby:update
 
 # Snorby 2.5.1
 

@@ -9,7 +9,6 @@ Snorby::Application.routes.draw do
     member do
       get :last_error
       get :handler
-      get :log
     end
   end
 
@@ -30,6 +29,9 @@ Snorby::Application.routes.draw do
   root :to => "page#dashboard"
 
   resources :sensors do
+    collection do
+      get :agent_list
+    end
   end
 
   resources :settings do
@@ -39,8 +41,6 @@ Snorby::Application.routes.draw do
       get :start_daily_cache
       get :start_geoip_update
       get :start_worker
-      get :reset_sensor_cache
-      get :reset_daily_cache
       get :reset_cache
     end
   end
@@ -78,6 +78,19 @@ Snorby::Application.routes.draw do
   end
 
   match ':controller(/:action(/:sid/:cid))', :controller => 'Events'
+
+  resources :asset_names do
+    member do
+      delete :remove
+    end
+
+    collection do
+      post :add
+      get :lookup
+      post :bulk_upload
+      get 'get_bulk_upload', action: :get_bulk_upload, as: 'get_bulk_upload'
+    end
+  end
 
   resources :events do
     

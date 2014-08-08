@@ -2,60 +2,78 @@
 
 	<script type="text/javascript">
 		
-		$(document).ready(function(){
-		  
-		 var ticks = <%= @ticks %>;
-		 
-         $.dash.severity = $.jqplot ('severity-graph', [[<%= @high.join(', ') %>], [<%= @medium.join(', ') %>], [<%= @low.join(', ') %>] ], {
-		      title: "Severity Count vs Time",
-		      height: 200,
-		      width: 300,
-		      seriesColors:['#FF0000', '#FAB90A', '#3A781A'],
-		      series:[
-		        {label:'High Severity'}, 
-		        {label:'Medium Severity'},
-		        {label:'Low Severity'}
-		        ],
-		      seriesDefaults: {
-		          rendererOptions: {
-		              smooth: true
-		          }
-		      },  
-		      highlighter: {
-			       show: true,
-			       useXTickMarks: true,
-			       sizeAdjust: 9.5
-			  },
-			  grid: { drawGridlines: true },
-			  cursor: { show: true, zoom: false },
-		      legend: { show:true, location: 'e' },  
-		      axesDefaults: {
-		        labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+		chart = new Highcharts.Chart({
+		      chart: {
+		         renderTo: 'severity-graph',
+		         defaultSeriesType: 'spline',
+		         marginRight: 80,
+							marginLeft: 80,
+							marginTop: 50,
+		         marginBottom: 50
 		      },
-		      axes: {
-		        xaxis: {
-		        	tickOptions:{ showGridline:false},	 
-		        	ticks: ticks,
-		        	pad: 0,
-				<% if (@range == 'year' || @range == 'quarter') %>
-					label: 'Month of Year'
-				<% elsif (@range == 'month' || @range == 'last_month') %>
-					label: 'Date of Month'
-				<% elsif (@range == 'week' || @range == 'last_week') %>
-					label: 'Date Of Week'
-				<% elsif @range == 'last_24' %>
-  					label: 'Last 24 Hours'
-				<% else %>
-					label: 'Hour of Day'
-				<% end %>
-		          
-		        },
-		        yaxis: {
-		                 	
-		          label: 'Severity Count'
-	        	}
-		      }
-		    });
+          credits: {
+            enabled: false
+          },
+		      title: {
+		         text: 'Severity Count vs Time',
+		         x: -20 //center
+		      },
+		      xAxis: {
+            categories: [<%= @axis.try(:html_safe) %>],
+		        title: {
+								margin: 10,
+								<% if (@range == 'year' || @range == 'quarter') %>
+									text: 'Month of Year'
+								<% elsif (@range == 'month' || @range == 'last_month') %>
+									text: 'Date of Month'
+								<% elsif (@range == 'week' || @range == 'last_week') %>
+									text: 'Date Of Week'
+                <% elsif @range == 'last_24' %>
+                  text: 'Last 24 Hours'
+								<% else %>
+									text: 'Hour of Day'
+								<% end %>
+		         }
+		      },
+		      yAxis: {
+		         title: {
+		            text: 'Severity Count'
+		         },
+		         plotLines: [{
+		            value: 0,
+		            width: 1,
+		            color: '#808080'
+		         }]
+		      },
+		      tooltip: {
+		         formatter: function() {
+		                   return '<b>'+ this.series.name +'</b><br/>'+ this.y + ' Events';
+		         }
+		      },
+		      legend: {
+		         layout: 'vertical',
+		         align: 'right',
+		         verticalAlign: 'top',
+		         x: 0,
+		         y: 0,
+		         borderWidth: 0,
+						 borderRadius: 0,
+						 borderColor: '#ddd',
+						 backgroundColor: '#fff'
+		      },
+		      series: [{
+            name: 'High Severity',
+            color: sev1_bg_color,
+						data: [<%= @high.join(', ') %>]
+					},{
+						name: 'Medium Severity',
+            color: sev2_bg_color,
+						data: [<%= @medium.join(', ') %>]
+					},{
+            name: 'Low Severity',
+            color: sev3_bg_color,
+						data: [<%= @low.join(', ') %>]
+					}]
 		   });
 		
 		

@@ -1,22 +1,3 @@
-# Snorby - All About Simplicity.
-# 
-# Copyright (c) 2010 Dustin Willis Webber (dustin.webber at gmail.com)
-# 
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-# Snorby
 module Snorby
 
   #
@@ -47,7 +28,8 @@ module Snorby
       :user => "event.user_id",
       :payload => "data.data_payload",
       :start_time => "event.timestamp",
-      :end_time => "event.timestamp"
+      :end_time => "event.timestamp",
+      :has_note => "event.notes_count"
     }
 
     OPERATOR = {
@@ -60,7 +42,7 @@ module Snorby
       :lt => "< ?",
       :gt => "> ?",
       :in => "IN (?)",
-      :notnull => "NOT NULL ?",
+      :notnull => "IS NOT NULL",
       :isnull => "IS NULL"
     }
 
@@ -134,7 +116,11 @@ module Snorby
           :process => lambda do |data|
             tmp = []
             data.each do |ip|
-              tmp.push(IPAddr.new(ip.to_s).to_i)
+              if ip.to_s.length >= 1
+                tmp.push(IPAddr.new(ip.to_s).to_i)
+              else
+                tmp.push("");
+              end
             end
             tmp
           end
@@ -178,7 +164,11 @@ module Snorby
           :process => lambda do |data|
             tmp = []
             data.each do |ip|
-              tmp.push(IPAddr.new(ip.to_s).to_i)
+              if ip.to_s.length >= 1
+                tmp.push(IPAddr.new(ip.to_s).to_i)
+              else
+                tmp.push("");
+              end
             end
             tmp
           end
@@ -204,7 +194,8 @@ module Snorby
       :classification => :event,
       :user => :event,
       :sensor => :event,
-      :sensor_name => :sensor
+      :sensor_name => :sensor,
+      :has_note => :event
     }
 
     def self.joins
@@ -310,8 +301,6 @@ module Snorby
       total_sql.push(values.flatten).flatten!
       count.push(values.flatten).flatten!
 
-      p [total_sql, count]
-
       [total_sql, count]
     end
 
@@ -344,18 +333,112 @@ module Snorby
           if map_value.is_a?(Array)
 
             map_value.each do |x|
+
+              if column == :classification && value.to_i == 0
+                if operator == :is || operator == :isnull
+                  operator = :isnull
+                else
+                  operator = :notnull
+                end
+                value = "NULL"
+              end
+
+              if column == :has_note
+                if value.to_i == 1
+                  case operator
+                  when :is
+                    operator = :gt
+                    value = 0
+                  when :is_not
+                    operator = :lt
+                    value = 1
+                  end
+
+                else
+                  case operator
+                  when :is
+                    operator = :lt
+                    value = 1
+                  when :is_not
+                    operator = :gt
+                    value = 0
+                  end
+
+                end
+              end
+
               tmp_sql = "#{COLUMN[column][x]} #{OPERATOR[operator]}"
 
               instance_variable_get("@" + x.to_s).push(tmp_sql)
-              unless [:isnull].include?(operator)
+              unless [:isnull, :notnull].include?(operator)
+
+                if [:start_time, :end_time].include?(column)
+                  # If timezone_search exists ands is set to true
+                  # in snorby_config.yml set the search with the local time.
+                  # Otherwise (default) search with UTC
+		  value = APP_CONFIG['timezone_search'] ?  Time.zone.parse(value).strftime('%Y-%m-%d %H:%M:%S') : Time.zone.parse(value).utc.strftime('%Y-%m-%d %H:%M:%S')
+                end
+
+                if column == :signature_name
+                  value = "%#{value}%"
+                end
+
                 instance_variable_get("@" + x.to_s + "_value").push(value)
               end
             end
 
           else
+
+            if column == :classification && value.to_i == 0
+              if operator == :is || operator == :isnull
+                operator = :isnull
+              else
+                operator = :notnull
+              end
+              value = "NULL"
+            end
+
+            if column == :has_note
+
+              if value.to_i == 1
+                case operator
+                when :is
+                  operator = :gt
+                  value = 0
+                when :is_not
+                  operator = :lt
+                  value = 1
+                end
+
+              else
+                case operator
+                when :is
+                  operator = :lt
+                  value = 1
+                when :is_not
+                  operator = :gt
+                  value = 0
+                end
+                
+              end
+            end
+
             tmp_sql = "#{COLUMN[column]} #{OPERATOR[operator]}"
             instance_variable_get("@" + map_value.to_s).push(tmp_sql)
-            unless [:isnull].include?(operator)
+            unless [:isnull, :notnull].include?(operator)
+
+              if [:start_time, :end_time].include?(column)
+	  	# If timezone_search exists ands is set to true
+                # in snorby_config.yml set the search with the local time.
+                # Otherwise (default) search with UTC
+                value = APP_CONFIG['timezone_search'] ?  Time.zone.parse(value).strftime('%Y-%m-%d %H:%M:%S') : Time.zone.parse(value).utc.strftime('%Y-%m-%d %H:%M:%S')
+              end
+
+              if column == :signature_name
+                value = "%#{value}%"
+              end
+
+
               instance_variable_get("@" + map_value.to_s + "_value").push(value)
             end
           end
@@ -373,6 +456,16 @@ module Snorby
 
       @json ||= {
         :operators => {
+          :contains => [
+            {
+              :id => :contains,
+              :value => "contains"
+            },
+            {
+              :id => :contains_not,
+              :value => "does not contain"
+            }
+          ],
           :more_text_input => [
             {
               :id => :is,
@@ -480,7 +573,7 @@ module Snorby
           {
             :value => "Signature Name",
             :id => :signature_name,
-            :type => :text_input
+            :type => :contains
           },
           {
             :value => "Classified By",
@@ -488,7 +581,7 @@ module Snorby
             :type => :select
           },
           {
-            :value => "Sensor",
+            :value => "Agent",
             :id => :sensor,
             :type => :select
           },
@@ -510,6 +603,11 @@ module Snorby
           {
             :value => "Severity",
             :id => :severity,
+            :type => :select
+          },
+          {
+            :value => "Has Note",
+            :id => :has_note,
             :type => :select
           }
           # {
@@ -534,6 +632,18 @@ module Snorby
             }
           ]
         },
+        :has_note => {
+          :value => [
+            {
+              :id => 1,
+              :value => "Yes"
+            },
+            {
+              :id => 0,
+              :value => "No"
+            }
+          ]
+        },
         :classifications => {
           :type => :dropdown,
           :value => @classifications.collect do |x|
@@ -541,7 +651,7 @@ module Snorby
               :id => x.id,
               :value => x.name
             }
-          end
+          end.push({ :id => 0, :value => "Unclassified" })
         },
         :severities => {
           :type => :dropdown,
@@ -575,13 +685,13 @@ module Snorby
           :value => @sensors.collect do |x|
             {
               :id => x.sid,
-              :value => x.name
+              :value => x.sensor_name
             }
           end
         }
       }
 
-      @json.to_json.html_safe
+      @json.to_json
     end
 
   end # Search

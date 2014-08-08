@@ -1,11 +1,9 @@
 <%= snorby_box("Lookup: #{@lookup.hostname}") do %>
-	
-	<%= link_to "DNS", '', :class => 'query-data', :"data-content-name" => 'dns' %>|
-	
+
 	<% if Setting.whois? %>
-	  <%= link_to "Whois Information", '', :class => 'query-data', :"data-content-name" => 'whois' %> <br />
+	  <%= link_to "Whois Information", '', :class => 'query-data', :"data-content-name" => 'whois' %>|
 	<% end %>
-	
+	<%= link_to "DNS", '', :class => 'query-data', :"data-content-name" => 'dns' %><br />
 	<br />
 
 	<div id='lookup-box-content' class=''>

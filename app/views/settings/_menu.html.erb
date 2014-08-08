@@ -1,29 +1,14 @@
-<% if Snorby::Worker.running? %>
-	<%= menu_item "Restart Worker", restart_worker_settings_path, 'icons/restart.png', :confirm => "Are you sure you want to restart the worker process?" %>
-<% end %>
+<% if Snorby::Worker.problems? %>
 
-<%= drop_down_for('Worker Options', 'icons/worker.png', 'worker') do %>
-
-	<% if Snorby::Worker.running? %>
-		
-		<% if Snorby::Worker.problems? %>
-			
+	<%= drop_down_for('Worker Options', 'icons/worker.png', 'worker') do %>
+	
+		<% if Snorby::Worker.running? %>
 			<%= drop_down_item "Start Sensor Cache Job", start_sensor_cache_settings_path unless Snorby::Jobs.sensor_cache? %>
-			<%= drop_down_item "Start Daily Cache Job", start_daily_cache_settings_path unless Snorby::Jobs.daily_cache?  %>
 			<%= drop_down_item "Start GeoIP Database Update Job", start_geoip_update_settings_path if (Setting.geoip? && !Snorby::Jobs.geoip_update?) %>			
-			
 		<% else %>
-		
-			<%= drop_down_item "Reset Sensor Cache", reset_sensor_cache_settings_path  %>
-			<%= drop_down_item "Reset Daily Cache", reset_daily_cache_settings_path  %>	
-			<%= drop_down_item "Reset All Caches", reset_cache_settings_path  %>
-		
+			<%= drop_down_item "Start Worker", start_worker_settings_path %>
 		<% end %>
-				
-	<% else %>
-		<%= drop_down_item "Start Worker", start_worker_settings_path %>
+		
 	<% end %>
 
 <% end %>
-
-

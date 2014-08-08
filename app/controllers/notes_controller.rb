@@ -9,7 +9,7 @@ class NotesController < ApplicationController
   end
   
   def index
-    @notes = Note.all.page(params[:page].to_i, :per_page => @current_user.per_page_count, :order => [:id.asc])
+    @notes = Note.all.page(params[:page].to_i, :per_page => @current_user.per_page_count, :order => [:id.desc])
     @show_alert = true
   end
   
