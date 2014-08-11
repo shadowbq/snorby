@@ -28,6 +28,7 @@ public/javascripts/all.js
 public/javascripts/snorby_packaged.js
 public/stylesheets/snorby_packaged.css
 vendor/bundle/
+vendor/cache/
 
 !tmp/.gitignore
 !log/.gitignore
@@ -36,6 +37,7 @@ nbproject
 
 # Ignore Config Files
 config/snorby_config.yml
+config/initializers/mail_config.rb
 config/database.yml
 config/snorby.yml
 config/snorby-geoip.dat

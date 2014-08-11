@@ -104,3 +104,7 @@ end
 group(:doc) do
   gem 'dm-visualizer',	'~> 0.1.0'
 end
+
+group(:jungle) do
+  gem "puma"
+end

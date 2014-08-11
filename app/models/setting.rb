@@ -1,4 +1,4 @@
-	<td class='logs'><%= link_to image_tag("icons/note-icon.png", :size => '16x16', :class => 'trash'), log_job_path(job), :class => 'snorbybox' %></td>class Setting
+class Setting
 
   CHECKBOXES = [
     :utc,

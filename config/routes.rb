@@ -9,6 +9,7 @@ Snorby::Application.routes.draw do
     member do
       get :last_error
       get :handler
+      get :log
     end
   end
 
