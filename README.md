@@ -65,30 +65,28 @@ Pass: snorby
 
 * Create Mysql User & Initial Authentication
 	
-	`mysql -u root -p`
-
-	`mysql> create user 'snorby'@'localhost' identified by 'sn0rbys3cr3t';`
-	
-	`mysql> grant all privileges on snorby.* to 'snorby'@'localhost';`
+	```shell
+	mysql -u root -p`
+	mysql> create user 'snorby'@'localhost' identified by 'sn0rbys3cr3t';
+	mysql> grant all privileges on snorby.* to 'snorby'@'localhost';
+	```
 
 * Copy the Snorby Configuration File Examples
 
-	`cp config/snorby_config.yml.example config/snorby_config.yml`
-	`cp config/database.yml.example config/database.yml`
+	* `cp config/snorby_config.yml.example config/snorby_config.yml`
+	* `cp config/initializer/mail_config.rb.example config/initalizer/mail_config.rb`
+	* `cp config/database.yml.example config/database.yml`
 
 * Fill out settings for config/database.yml && config/snorby_config.yml
 
-	`vi config/snorby_config.yml`
-	`vi config/database.yml`
+	* `vi config/snorby_config.yml`
+	* `vi config/initalizer/mail_config.rb`
+	* `vi config/database.yml`
 	
 * Run The Snorby Setup
 
 	`RAILS_ENV=production bundle exec rake snorby:setup`
 
-* Edit The Snorby Mail Configurations
-
-	`config/initializers/mail_config.rb`
-	
 * Once all options have been configured and snorby is up and running
 
 	* Make sure you start the Snorby Worker from the Administration page.
@@ -99,9 +97,10 @@ Pass: snorby
 	* E-mail: **snorby@snorby.org**
 	* Password: **snorby**
 	
-* NOTE - If you do not run Snorby with passenger (http://www.modrails.com) people remember to start rails in production mode.
+* NOTE - If you do not run Snorby with Phusion Passenger (https://www.phusionpassenger.com/) people remember to start rails in production mode. Here is an example of using Puma (https:http://puma.io/) from the bundle package.
 
-	`rails -e production`
+	* `bundle exec puma -e production`
+
 	
 ## Updating Snorby
 
