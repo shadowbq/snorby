@@ -49,6 +49,10 @@ module Snorby
           search(Snorby::Rule.paths)
         end
 
+        if @rule.nil? && @generator_id.nil? 
+          @rule = "Possible non text based rule. Check sensor genmsg.map for mapping of genid:#{@generator_id} then look in doc/README.name_of_generator for rule:#{@rule_id}"
+        end
+
         @rule
       end
 

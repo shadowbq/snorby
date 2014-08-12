@@ -88,6 +88,7 @@ group(:development) do
 	gem "letter_opener"
   gem 'thin'
 #  gem 'wirble'
+  gem 'pry-rails'
 end
 
 group(:test) do
