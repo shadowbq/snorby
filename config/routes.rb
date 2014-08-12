@@ -50,6 +50,7 @@ Snorby::Application.routes.draw do
 
     collection do
       get :search
+      get :rule
     end
     
   end

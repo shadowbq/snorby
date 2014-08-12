@@ -41,6 +41,19 @@ class SignaturesController < ApplicationController
     end
   end
 
+  def rule
+    @signature = Signature.get(params[:id])
+
+    @signature.rule ? @rule = @signature.rule : @rule = 'No rule found for this event.'
+
+    respond_to do |format|
+      format.html { render :layout => false }
+      format.json { render :json => @rule }
+      format.xml { render :xml => @rule }
+      format.csv { render :json => @rule.to_csv }
+    end
+  end
+
   private
 
   def sort_column

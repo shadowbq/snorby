@@ -61,6 +61,16 @@ class Signature
     end
   end
 
+  def rule
+    @rule = Snorby::Rule.get({
+      :rule_id => self.sig_sid,
+      :generator_id => self.sig_gid,
+      :revision_id => self.sig_rev
+    })
+
+    @rule if @rule.found?
+  end
+
   def self.sorty(params={})
     sort = params[:sort]
     direction = params[:direction]

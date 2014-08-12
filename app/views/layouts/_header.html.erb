@@ -73,7 +73,7 @@
 					<% unless Snorby::Worker.running? %>
 						<li class='menu-error right <%= current_user.admin ? 'admin' : '' %>'>
 						  <%= image_tag('icons/note-icon-white.png') %>
-						  The Snorby worker is not currently running.
+						  The Snorby worker is not running.
 						</li>
 					<% end %>
 					
