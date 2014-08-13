@@ -59,9 +59,13 @@ Pass: snorby
 
 	* If running `bundle exec {app}` is painful you can safely install binstubs by `bundle install --binstubs` 
 	
-* Install wkhtmltopdf
+* Install & Test wkhtmltopdf
 
-	`pdfkit --install-wkhtmltopdf # If this fails - visit http://code.google.com/p/wkhtmltopdf/ for more information`
+	Install wkhtmltopdf via `pdfkit --install-wkhtmltopdf`, or your package management solution (apt, etc)
+
+	* `wkhtmltopdf http://google.com google.pdf`
+	
+	If this fails - visit [wkhtmltopdf.org](http://wkhtmltopdf.org/downloads.html) for updated packages 
 
 * Create Mysql User & Initial Authentication
 	
