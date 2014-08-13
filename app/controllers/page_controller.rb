@@ -52,7 +52,7 @@ class PageController < ApplicationController
 
     @recent_events = [];
     sigs.each{|s| @recent_events << Event.last(:sig_id => s) }
-
+    
     respond_to do |format|
       format.html # { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf.html.erb' }
       format.js
