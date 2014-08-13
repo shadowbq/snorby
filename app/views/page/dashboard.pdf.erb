@@ -326,19 +326,13 @@
 			<th>Percentage</th>
 			<th>Event Count</th>
 		</tr>
-
-		<% source_total = @src_metrics.map(&:last).sum %>
-		<% src_count = 0 %>
-		<% @src_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.each do |name, count| %>
 		
-		<% break if src_count >= 10 %>
+		<% @src_metrics.each do |name, count| %>
 			<tr>
-				<td><%= name %></td>
-				<td style='width:100px'><%= percentage_for(count, source_total) %>%</td>
+				<td><%= enrich_asset(name) %></td>
+				<td style='width:100px'><%= percentage_for(count, @src_total) %>%</td>
 				<td style='width:100px'><%= count %></td>
 			</tr>
-			
-			<% src_count += 1 %>
 			
 		<% end %>
 
@@ -354,20 +348,13 @@
 			<th>Event Count</th>
 		</tr>
 
-		<% destination_total = @dst_metrics.map(&:last).sum %>
-		<% dst_count = 0 %>
-		<% @dst_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.each do |name, count| %>
-		<% break if dst_count >= 10 %>
-		
+		<% @dst_metrics.each do |name, count| %>
 			<tr>
-				<td><%= name %></td>
-				<td style='width:100px'><%= percentage_for(count, destination_total) %>%</td>
+				<td><%= enrich_asset(name) %></td>
+				<td style='width:100px'><%= percentage_for(count, @dst_total) %>%</td>
 				<td style='width:100px'><%= count %></td>
 			</tr>
-			
-			<% dst_count += 1 %>
-			
-		<% end %>
+		<% end %>			
 
 	</table>
 </div>

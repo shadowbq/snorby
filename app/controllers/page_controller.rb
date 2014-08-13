@@ -5,56 +5,24 @@ class PageController < ApplicationController
 
   def dashboard
 
-    @now = Time.now
-
-    @range = params[:range].blank? ? 'last_24' : params[:range]
-
-    if @range.to_sym == :custom
-      begin
-        @custom_start = Time.zone.parse(params[:start]).utc.strftime('%Y-%m-%d %H:%M:%S')
-        @custom_end = Time.zone.parse(params[:end]).utc.strftime('%Y-%m-%d %H:%M:%S')
-      rescue => e
-      end
-    end
-
-    set_defaults
-
-    @src_metrics = @cache.src_metrics
-    @dst_metrics = @cache.dst_metrics
-
-    @tcp = @cache.protocol_count(:tcp, @range.to_sym)
-    @udp = @cache.protocol_count(:udp, @range.to_sym)
-    @icmp = @cache.protocol_count(:icmp, @range.to_sym)
-
-    @high = @cache.severity_count(:high, @range.to_sym)
-    @medium = @cache.severity_count(:medium, @range.to_sym)
-    @low = @cache.severity_count(:low, @range.to_sym)
-    
-    @sensor_metrics = @cache.sensor_metrics(@range.to_sym)
-
-    @signature_metrics = @cache.signature_metrics
-
-    @event_count = @cache.all.map(&:event_count).sum
-     
-    @axis = if @sensor_metrics.last
-      @sensor_metrics.last[:range].join(',')
-    else
-      ""
-    end
-
-    @classifications = Classification.all(:order => [:events_count.desc])
-    @sensors = Sensor.all(:limit => 5, :order => [:events_count.desc])
-    @favers = User.all(:limit => 5, :order => [:favorites_count.desc])
-
-    @last_cache = @cache.cache_time
-
-    sigs = latest_five_distinct_signatures
-
-    @recent_events = [];
-    sigs.each{|s| @recent_events << Event.last(:sig_id => s) }
+    prep_report
     
     respond_to do |format|
       format.html # { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf.html.erb' }
+      format.js
+      format.pdf do
+        render :pdf => "Snorby Report - #{@start_time.strftime('%A-%B-%d-%Y-%I-%M-%p')} - #{@end_time.strftime('%A-%B-%d-%Y-%I-%M-%p')}", :template => "page/dashboard.pdf.erb", :layout => 'pdf.html.erb', :stylesheets => ["pdf"]
+      end
+    end
+
+  end
+
+  def report
+
+    prep_report
+    
+    respond_to do |format|
+      format.html { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf_test.html.erb' }
       format.js
       format.pdf do
         render :pdf => "Snorby Report - #{@start_time.strftime('%A-%B-%d-%Y-%I-%M-%p')} - #{@end_time.strftime('%A-%B-%d-%Y-%I-%M-%p')}", :template => "page/dashboard.pdf.erb", :layout => 'pdf.html.erb', :stylesheets => ["pdf"]
@@ -148,6 +116,89 @@ class PageController < ApplicationController
   end
 
   private
+
+  def translate_range(range)
+    case range.to_sym
+    when :custom
+      return 'Custom'
+    when :last_24
+      return 'Last 24 Hours'
+    when :today
+      return 'Today'
+    when :yesterday
+      return 'Yesterday'
+    when :week
+      return 'Weekly'
+    when :last_week
+      return 'Previous Week'
+    when :month
+      return 'Monthly'
+    when :last_month
+      return 'Previous Month'
+    when :quarter
+      return 'Quarterly '
+    when :year
+      return 'Annual'
+    else
+      return 'Today'
+    end
+  end
+
+  def prep_report
+    @now = Time.now
+
+    @range = params[:range].blank? ? 'last_24' : params[:range]
+
+    if @range.to_sym == :custom
+      begin
+        @custom_start = Time.zone.parse(params[:start]).utc.strftime('%Y-%m-%d %H:%M:%S')
+        @custom_end = Time.zone.parse(params[:end]).utc.strftime('%Y-%m-%d %H:%M:%S')
+      rescue => e
+      end
+    end
+
+    set_defaults
+
+    
+    @src_metrics = @cache.src_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.take(10)
+    @src_total = @src_metrics.map(&:last).sum
+
+    @dst_metrics = @cache.dst_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.take(10)
+    @dst_total = @dst_metrics.map(&:last).sum
+
+    @tcp = @cache.protocol_count(:tcp, @range.to_sym)
+    @udp = @cache.protocol_count(:udp, @range.to_sym)
+    @icmp = @cache.protocol_count(:icmp, @range.to_sym)
+
+    @high = @cache.severity_count(:high, @range.to_sym)
+    @medium = @cache.severity_count(:medium, @range.to_sym)
+    @low = @cache.severity_count(:low, @range.to_sym)
+    
+    @sensor_metrics = @cache.sensor_metrics(@range.to_sym)
+
+    @signature_metrics = @cache.signature_metrics
+
+    @event_count = @cache.all.map(&:event_count).sum
+     
+    @axis = if @sensor_metrics.last
+      @sensor_metrics.last[:range].join(',')
+    else
+      ""
+    end
+
+    @classifications = Classification.all(:order => [:events_count.desc])
+    @sensors = Sensor.all(:limit => 5, :order => [:events_count.desc])
+    @favers = User.all(:limit => 5, :order => [:favorites_count.desc])
+
+    @last_cache = @cache.cache_time
+
+    sigs = latest_five_distinct_signatures
+
+    @recent_events = [];
+    sigs.each{|s| @recent_events << Event.last(:sig_id => s) }
+
+    @lang_range = translate_range(@range)
+  end
 
   def set_defaults
 

@@ -48,4 +48,9 @@ module PageHelper
     title
   end
 
+  def enrich_asset(name)
+    host_asset = AssetName.all(:ip_address => IPAddr.new(name,Socket::AF_INET)).first
+    return  host_asset.nil? ? name : host_asset.name + " (" + name + ")"
+  end
+
 end

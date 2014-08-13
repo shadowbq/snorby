@@ -28,3 +28,5 @@ stylesheets:
   snorby:
     - public/stylesheets/grid.css
     - public/stylesheets/snorby.css
+  pdf:
+    - public/stylesheets/pdf.css
