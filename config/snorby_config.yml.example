@@ -20,6 +20,7 @@ production:
   timezone_search: true
   # uncomment to set time zone to time zone of box from /usr/share/zoneinfo, e.g. "America/Cancun"
   # time_zone: 'UTC'
+  bannerurl: 'http://www.threatstack.com'
 
 #
 # Only Use For Development
