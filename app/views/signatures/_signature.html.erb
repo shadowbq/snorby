@@ -11,9 +11,9 @@
   <td class="" title="sid_<%= signature.sig_sid %>"><%= signature.sig_sid || 'N/A' %></td>
 
   <td class="" title="<%= signature.name %>"><%= truncate(signature.name, :length => 100) %></td>
-
-  <td class='chart-large add_tipsy' title="<%= signature.events_count %> of <%= pluralize(@total_event_count, "event") %>">
-		<%= css_chart(signature.event_percentage(false, @total_event_count), true) %>
+  <td class="" title="<%= signature.last_event_timestamp %>"><%= signature.fresh.to_s || 'N/A' %></td>
+    <td class='chart add_tipsy' title="<%= signature.events_count %> of <%= pluralize(@total_event_count, "event") %>">
+		<%= css_chart(signature.event_percentage(false, @total_event_count)) %>
 	</td>
 
   <td class="" style='width:90px;'>

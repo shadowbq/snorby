@@ -71,6 +71,19 @@ class Signature
     @rule if @rule.found?
   end
 
+  def first_event_timestamp
+    self.events.first.timestamp
+  end
+
+  def last_event_timestamp
+    self.events.last.timestamp
+  end
+
+  # Is this the first day we have seen this signature?
+  def fresh
+    2 > ((self.last_event_timestamp.to_i - self.first_event_timestamp.to_i) / 86400)
+  end
+
   def self.sorty(params={})
     sort = params[:sort]
     direction = params[:direction]
@@ -83,5 +96,9 @@ class Signature
 
     page(params[:page].to_i, page)
   end
+
+  
+
+  
 
 end
