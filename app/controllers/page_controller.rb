@@ -7,6 +7,8 @@ class PageController < ApplicationController
 
     prep_report
     
+    dashboard_stats
+
     respond_to do |format|
       format.html # { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf.html.erb' }
       format.js
@@ -20,6 +22,8 @@ class PageController < ApplicationController
   def report
 
     prep_report
+
+    slow_reports
     
     respond_to do |format|
       format.html { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf_test.html.erb' }
@@ -159,45 +163,74 @@ class PageController < ApplicationController
 
     set_defaults
 
+    @event_count = @cache.all.map(&:event_count).sum
+    @lang_range = translate_range(@range)
+
+    #Sensors
+    @sensor_metrics = @cache.sensor_metrics(@range.to_sym)
     
-    @src_metrics = @cache.src_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.take(10)
-    @src_total = @src_metrics.map(&:last).sum
+    #Severities
+    @high = @cache.severity_count(:high, @range.to_sym)
+    @medium = @cache.severity_count(:medium, @range.to_sym)
+    @low = @cache.severity_count(:low, @range.to_sym)
 
-    @dst_metrics = @cache.dst_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.take(10)
-    @dst_total = @dst_metrics.map(&:last).sum
-
+    #Protocols
     @tcp = @cache.protocol_count(:tcp, @range.to_sym)
     @udp = @cache.protocol_count(:udp, @range.to_sym)
     @icmp = @cache.protocol_count(:icmp, @range.to_sym)
 
-    @high = @cache.severity_count(:high, @range.to_sym)
-    @medium = @cache.severity_count(:medium, @range.to_sym)
-    @low = @cache.severity_count(:low, @range.to_sym)
+    #Top 15 Signatures
+    @signature_metrics = @cache.signature_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }
+    @sig_total = @signature_metrics.map(&:last).sum
+
+    #Top 10 Source Addresses
+    @src_metrics = @cache.src_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.take(10)
+    @src_total = @src_metrics.map(&:last).sum
+
+    #Top 10 Destination Addresses
+    @dst_metrics = @cache.dst_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.take(10)
+    @dst_total = @dst_metrics.map(&:last).sum
+
     
-    @sensor_metrics = @cache.sensor_metrics(@range.to_sym)
+    #High Charts  
+    @axis = @sensor_metrics.last ? @sensor_metrics.last[:range].join(',') : ""
+    
+    #@classifications = Classification.all(:order => [:events_count.desc])
+  end
 
-    @signature_metrics = @cache.signature_metrics
+  def slow_reports
+    
+    def classifications_count
+      
+      classify_truths = Classification.collect do |classify|
+        classify.events.to_a.map do |event|
+          (event.timestamp > @start_time) && (event.timestamp < @end_time) 
+        end
+      end
 
-    @event_count = @cache.all.map(&:event_count).sum
-     
-    @axis = if @sensor_metrics.last
-      @sensor_metrics.last[:range].join(',')
-    else
-      ""
+      classify_count = classify_truths.collect {|a| a.count {|b| b if true } }
+
+      return Classification.all.map(&:name).zip(classify_count)
+  
     end
+    
+    @classifications_count = classifications_count
 
+
+
+  end
+
+  def dashboard_stats
+    #Main Dashboard Only 
     @classifications = Classification.all(:order => [:events_count.desc])
     @sensors = Sensor.all(:limit => 5, :order => [:events_count.desc])
     @favers = User.all(:limit => 5, :order => [:favorites_count.desc])
-
     @last_cache = @cache.cache_time
 
     sigs = latest_five_distinct_signatures
 
     @recent_events = [];
-    sigs.each{|s| @recent_events << Event.last(:sig_id => s) }
-
-    @lang_range = translate_range(@range)
+    sigs.each { |s| @recent_events << Event.last(:sig_id => s) }
   end
 
   def set_defaults

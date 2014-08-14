@@ -89,6 +89,8 @@ group(:development) do
   gem 'thin'
   gem 'pry-rails'
   gem 'pry-remote'
+  gem 'pry-stack_explorer'
+  gem 'pry-debugger'
 end
 
 group(:test) do

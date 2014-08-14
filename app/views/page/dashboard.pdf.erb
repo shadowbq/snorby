@@ -279,6 +279,26 @@
 </div>
 
 <div class='table-holder'>
+	<h2>Analyst Classified Events</h2>
+	<table border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<th>Classification</th>
+			<th>Percentage</th>
+			<th>Event Count</th>
+		</tr>
+		
+		<% @classifications_count.each do |name, count| %>
+			<tr>
+				<td><%= truncate(name.to_s, :length => 65) %></td>
+				<td style='width:100px'><%= percentage_for(count, @event_count) %>%</td>
+				<td style='width:100px'><%= count %></td>
+			</tr>
+		<% end %>
+
+	</table>
+</div>
+
+<div class='table-holder'>
 	<h2>Protocols</h2>
 	<table border="0" cellspacing="0" cellpadding="0">
 		<tr>
@@ -307,14 +327,15 @@
 			<th>Percentage</th>
 			<th>Event Count</th>
 		</tr>
-		<% sig_total = @signature_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.map(&:last).sum %>
-		<% @signature_metrics.sort{|a,b| -1*(a[1]<=>b[1]) }.each do |name, count| %>
+		
+		<% @signature_metrics.each do |name, count| %>
 			<tr>
 				<td><%= truncate(name.to_s, :length => 65) %></td>
-				<td style='width:100px'><%= percentage_for(count, sig_total) %>%</td>
+				<td style='width:100px'><%= percentage_for(count, @sig_total) %>%</td>
 				<td style='width:100px'><%= count %></td>
 			</tr>
 		<% end %>
+
 	</table>
 </div>
 
@@ -333,7 +354,6 @@
 				<td style='width:100px'><%= percentage_for(count, @src_total) %>%</td>
 				<td style='width:100px'><%= count %></td>
 			</tr>
-			
 		<% end %>
 
 	</table>

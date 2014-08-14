@@ -144,6 +144,22 @@ You can open the rails console at anytime and interact with the Snorby environme
 	# If the Snorby worker is running this will start the cache jobs and set the run_at time for the current time.
 	Snorby::Jobs.run_now!
 
+# Development Notes
+
+  Puma, and Thin are both available to be used instead of webbrick.
+
+  There is a full debugger now if you load up `pry-remote`, as well as `RAILS_ENV=production bundle exec rails c` 
+
+  ```ruby
+  require 'pry-debugger'
+  require 'pry-remote'
+  binding.remote_pry
+  ```
+  * [pry](https://github.com/pry/pry)
+  * [pry-remote](https://github.com/Mon-Ouie/pry-remote)
+  * [pry_debug](https://github.com/nixme/pry-debugger)
+  * [pry-rails](https://github.com/rweng/pry-rails)
+
 ## License
 
 Please refer to the LICENSE file found in the root of the snorby project.
