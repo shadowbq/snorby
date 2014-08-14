@@ -10,10 +10,10 @@ class PageController < ApplicationController
     dashboard_stats
 
     respond_to do |format|
-      format.html # { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf.html.erb' }
+      format.html
       format.js
       format.pdf do
-        render :pdf => "Snorby Report - #{@start_time.strftime('%A-%B-%d-%Y-%I-%M-%p')} - #{@end_time.strftime('%A-%B-%d-%Y-%I-%M-%p')}", :template => "page/dashboard.pdf.erb", :layout => 'pdf.html.erb', :stylesheets => ["pdf"]
+        redirect_to action: "report", format: "pdf", range: params[:range]
       end
     end
 
@@ -26,10 +26,10 @@ class PageController < ApplicationController
     slow_reports
     
     respond_to do |format|
-      format.html { render :template => 'page/dashboard.pdf.erb', :layout => 'pdf_test.html.erb' }
+      format.html { render :template => 'page/report.pdf.erb', :layout => 'pdf_test.html.erb' }
       format.js
       format.pdf do
-        render :pdf => "Snorby Report - #{@start_time.strftime('%A-%B-%d-%Y-%I-%M-%p')} - #{@end_time.strftime('%A-%B-%d-%Y-%I-%M-%p')}", :template => "page/dashboard.pdf.erb", :layout => 'pdf.html.erb', :stylesheets => ["pdf"]
+        render :pdf => "Snorby Report - #{@start_time.strftime('%A-%B-%d-%Y-%I-%M-%p')} - #{@end_time.strftime('%A-%B-%d-%Y-%I-%M-%p')}", :template => "page/report.pdf.erb", :layout => 'pdf.html.erb', :stylesheets => ["pdf"]
       end
     end
 
