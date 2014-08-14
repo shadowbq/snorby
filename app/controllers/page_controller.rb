@@ -214,9 +214,17 @@ class PageController < ApplicationController
   
     end
     
+    def fresh_sigs
+      #[2] pry(main)> Signature.first.fresh?
+      #    => false
+      #[3] pry(main)> Signature.first.fresh?(Time.zone.now - 5.days)
+      #    => true
+      return Signature.all.collect {|sigs| [sigs.name, sigs.events_count] if sigs.fresh?(@start_time) }.compact
+      
+    end
+
     @classifications_count = classifications_count
-
-
+    @fresh_sigs = fresh_sigs
 
   end
 
