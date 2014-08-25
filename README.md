@@ -118,7 +118,13 @@ Once the pull has competed successfully run the Snorby update rake task:
 	
 # Helpful Commands
 
-You can open the rails console at anytime and interact with the Snorby environment. Below are a few helpful commands that may be useful:
+** Rake Jobs **
+
+Starting the worker via the CLI after a server shutdown etc.. 
+
+	`RAILS_ENV=production bundle exec rake snorby:start_worker`
+
+You can open the `rails console` at anytime and interact with the Snorby environment. Below are a few helpful commands that may be useful:
 
  * Open the rails console by typing `rails c` in the Snorby root directory
  * You should never really need to run the below commands. They are all available within the
