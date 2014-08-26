@@ -1134,6 +1134,14 @@ div.content-box-body {
 	font-style: italic;
 }
 
+#form-holder span.sub-title {
+	font-size: 120%;
+	margin-bottom: 5px;
+	margin-left: 0px;
+	border-bottom: 1px gray dotted;
+	padding-bottom: 5px;
+}
+
 #wrapper #content #title .title-search-box {
     -webkit-border-radius: 15px;
     -moz-border-radius: 15px;
