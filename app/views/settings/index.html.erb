@@ -57,7 +57,6 @@
 			
 			<span class="sub-title grid_5">Reports</span>
 			
-		<div class='grid_5'>
             <% if not Snorby::CONFIG[:user_reports_control] %>
 			<p>
 				<%= check_box_tag '[settings][daily]', 1, (Setting.daily ? Setting.find(:daily) : nil) %> <%= label_tag 'Daily Reports' %><br />
@@ -78,6 +77,7 @@
         <i> Per User Reporting (user_reports_control) is enabled in the app config.yml file </i>
       </p>			
         <% end %>
+
 		<span class="sub-title grid_5">Plugins</span>
 
 			<p>
