@@ -72,12 +72,21 @@ class Signature
   end
 
   def first_event_timestamp
-    self.events.first.timestamp
+    begin
+      self.events.first.timestamp
+    rescue
+      Time.at(0)
+    end
   end
 
   def last_event_timestamp
-    self.events.last.timestamp
+    begin
+      self.events.last.timestamp
+    rescue
+      Time.at(0)
+    end
   end
+
 
 
   # Is this the first time we have seen this signature?
