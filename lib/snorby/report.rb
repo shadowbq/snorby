@@ -62,7 +62,7 @@ module Snorby
           :last_cache => @last_cache
         })
 
-        pdf = PDFKit.new(av.render(:template => "page/dashboard.pdf.erb", 
+        pdf = PDFKit.new(av.render(:template => "page/report.pdf.erb", 
                                    :layout => 'layouts/pdf.html.erb'))
 
         pdf.stylesheets << Rails.root.join("public/stylesheets/pdf.css")
