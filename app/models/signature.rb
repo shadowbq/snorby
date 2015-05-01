@@ -88,6 +88,7 @@ class Signature
   end
 
 
+
   # Is this the first time we have seen this signature?
   def fresh?(start_time = (Time.zone.now - 24.hours))
     self.first_event_timestamp > start_time
