@@ -1,4 +1,5 @@
 class ReportMailer < ActionMailer::Base
+  add_template_helper(PageHelper)
 
   def daily_report(email, timezone="UTC")
     report = Snorby::Report.build_report('yesterday', timezone)

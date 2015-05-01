@@ -1,4 +1,5 @@
 <% extend ApplicationHelper %>
+<% extend PageHelper %>
 
 <% content_for :pdf_header do %>
 	<br />
@@ -287,12 +288,16 @@
 			<th>Event Count</th>
 		</tr>
 		
-		<% @classifications_count.each do |name, count| %>
+ 		<% if !(@classifications_count.nil?) %>
+		<%     @classifications_count.each do |name, count| %>
 			<tr>
 				<td><%= truncate(name.to_s, :length => 65) %></td>
 				<td style='width:100px'><%= percentage_for(count, @event_count) %>%</td>
 				<td style='width:100px'><%= count %></td>
 			</tr>
+		  <% end %>
+		<% else %> 
+			<tr><td></td><td style='width:100px'></td><td style='width:100px'></td></tr>
 		<% end %>
 
 	</table>
@@ -347,14 +352,19 @@
 			<th>Percentage</th>
 			<th>Event Count</th>
 		</tr>
-		
-		<% @fresh_sigs.each do |name, count| %>
+
+		<% if !(@fresh_sigs.nil?) %>
+		<%   @fresh_sigs.each do |name, count| %>
 			<tr>
 				<td><%= truncate(name.to_s, :length => 65) %></td>
 				<td style='width:100px'><%= percentage_for(count, @event_count) %>%</td>
 				<td style='width:100px'><%= count %></td>
 			</tr>
-		<% end %>
+                  <% end %>
+                <% else %>
+                        <tr><td></td><td style='width:100px'></td><td style='width:100px'></td></tr>
+                <% end %>
+
 
 	</table>
 </div>
