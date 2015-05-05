@@ -111,6 +111,7 @@ if Lookup.all.blank?
   Lookup.create(:title => 'SANS Port Lookup', :value => 'http://isc.sans.edu/port.html?port=${port}')
   Lookup.create(:title => 'Trusted Source', :value => 'http://www.mcafee.com/threat-intelligence/ip/default.aspx?ip=${ip}')
   Lookup.create(:title => 'Whois Domain tools', :value => 'http://whois.domaintools.com/${ip}')
+  Lookup.create(:title => 'IP Void', :value => 'http://www.ipvoid.com/scan/${ip}/')
 end
 
 # Validate Snorby Indexes
